@@ -50,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void onDevicesButtonClick(View v) {
+        Intent intent = new Intent(this, DeviceActivity.class);
+        startActivity(intent);
+    }
+
     public void addConditionsToSpinner() {
         Spinner conditionsSpinner = findViewById(R.id.conditions_spinner);
 

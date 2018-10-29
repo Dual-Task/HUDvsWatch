@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">HUDvsWatch</string>
     <string name="title_activity_study">StudyActivity</string>
+    <string name="title_activity_device">DeviceActivity</string>
 </resources>
