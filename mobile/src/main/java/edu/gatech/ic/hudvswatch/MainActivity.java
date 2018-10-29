@@ -45,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, String.format("Subject ID = %s, Condition = %s, Is Training = %s", subjectId, condition, isTraining.toString()));
 
         Intent intent = new Intent(this, StudyActivity.class) {{
-            putExtra("subjectId", subjectId);
-            putExtra("condition", condition);
-            putExtra("isTraining", isTraining);
+            putExtra("studyRunInformation", new StudyRunInformation(subjectId, condition, isTraining));
         }};
         startActivity(intent);
     }

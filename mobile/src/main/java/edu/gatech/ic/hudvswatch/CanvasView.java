@@ -10,37 +10,62 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+
 public class CanvasView extends View {
+
+    // Constants
+    static final int TEXT_PADDING_LEFT = 10;
+    static final float TEXT_STROKE_WIDTH = 2f;
+    static final float TEXT_SIZE = 24f;
+    static final int CANVAS_MARGIN_TOP = 50;
 
     Bitmap mBitmap;
     Canvas mCanvas;
     Context context;
     Paint mTextPaint;
 
+    int canvasXStart, canvasXEnd, canvasYStart, canvasYEnd;
+    int canvasWidth, canvasHeight;
+    int detailXStart, detailXEnd, detailYStart, detailYEnd;
+
+    StudyRunInformation studyRunInformation;
+
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         context = c;
 
-        // and we set a new Paint with the desired attributes
         mTextPaint = new Paint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setColor(Color.BLACK);
         mTextPaint.setStyle(Paint.Style.STROKE);
         mTextPaint.setStrokeJoin(Paint.Join.ROUND);
-        mTextPaint.setStrokeWidth(1f);
+        mTextPaint.setStrokeWidth(TEXT_STROKE_WIDTH);
+        mTextPaint.setTextSize(TEXT_SIZE);
+
     }
 
-    // override onSizeChanged
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        // your Canvas will draw onto the defined Bitmap
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
+
+        canvasXStart = 0;
+        canvasXEnd = (int) (mCanvas.getWidth() * 0.80);
+        canvasYStart = 0;
+        canvasYEnd = mCanvas.getHeight();
+
+        canvasWidth = canvasXEnd - canvasXStart;
+        canvasHeight = canvasYEnd - canvasYStart;
+
+        detailXStart = canvasXEnd;
+        detailXEnd = mCanvas.getWidth();
+        detailYStart = 0;
+        detailYEnd = mCanvas.getHeight();
+
     }
 
-    // override onDraw
     @Override
     protected void onDraw(Canvas canvas) {
         mCanvas = canvas;
@@ -50,7 +75,7 @@ public class CanvasView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        this.invalidate();
+        this.invalidate();  // causes re-draw
         return super.onTouchEvent(event);
     }
 
@@ -60,8 +85,8 @@ public class CanvasView extends View {
         final int BORDER = 100;
         int xCellCount = RandomGridGenerator.getInstance().getGridWidth();
         int yCellCount = RandomGridGenerator.getInstance().getGridHeight();
-        final int X_DISTANCE = ((mCanvas.getWidth() - BORDER) / xCellCount);
-        final int Y_DISTANCE = ((mCanvas.getHeight() - BORDER) / yCellCount);
+        final int X_DISTANCE = ((canvasWidth - BORDER) / xCellCount);
+        final int Y_DISTANCE = ((canvasHeight - BORDER) / yCellCount);
 
 //        final int X_DISTANCE = 10;
 //        final int Y_DISTANCE = 10;
@@ -75,9 +100,21 @@ public class CanvasView extends View {
                 if (value == 0) {
                     continue;
                 }
-                canvas.drawText(Integer.toString(value), BORDER / 2 + i * X_DISTANCE, BORDER / 2 + j * Y_DISTANCE, mTextPaint);
+
+                int x = canvasXStart + BORDER / 2 + i * X_DISTANCE;
+                int y = canvasYStart + BORDER / 2 + j * Y_DISTANCE;
+                canvas.drawText(Integer.toString(value), x, y, mTextPaint);
             }
         }
+
+        canvas.drawLine(canvasXEnd, canvasYStart, canvasXEnd, canvasYEnd, mTextPaint);
+
+        canvas.drawText(this.studyRunInformation.condition, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP, mTextPaint);
+        canvas.drawText(this.studyRunInformation.subjectId, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 50, mTextPaint);
+        canvas.drawText(this.studyRunInformation.isTraining ? "Training" : "Testing", detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 100, mTextPaint);
     }
 
+    public void setStudyRunInformation(StudyRunInformation studyRunInformation) {
+        this.studyRunInformation = studyRunInformation;
+    }
 }
