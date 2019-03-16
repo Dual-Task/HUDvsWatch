@@ -1,4 +1,4 @@
-package edu.gatech.ic.hudvswatch;
+package edu.gatech.ic.hudvswatch.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;

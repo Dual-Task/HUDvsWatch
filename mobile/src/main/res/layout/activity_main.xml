@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.gatech.ic.hudvswatch.MainActivity">
+    tools:context="edu.gatech.ic.hudvswatch.activities.MainActivity">
 
     <Button
         android:id="@+id/devices_button"

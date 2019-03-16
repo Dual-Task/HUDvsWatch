@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.gatech.ic.hudvswatch.StudyActivity">
+    tools:context="edu.gatech.ic.hudvswatch.activities.StudyActivity">
 
-    <edu.gatech.ic.hudvswatch.CanvasView
+    <edu.gatech.ic.hudvswatch.utils.CanvasView
         android:id="@+id/signature_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
