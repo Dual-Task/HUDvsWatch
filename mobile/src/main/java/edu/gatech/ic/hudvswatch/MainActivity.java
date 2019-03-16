@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
 
     List<String> studyConditions = new ArrayList<String>() {{
-        add("");
         add("Visual Search");
         add("HUD");
         add("Watch");

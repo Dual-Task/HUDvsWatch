@@ -88,9 +88,6 @@ public class CanvasView extends View {
         final int X_DISTANCE = ((canvasWidth - BORDER) / xCellCount);
         final int Y_DISTANCE = ((canvasHeight - BORDER) / yCellCount);
 
-//        final int X_DISTANCE = 10;
-//        final int Y_DISTANCE = 10;
-
         Log.i("draw", String.format("Canvas Width = %d, Canvas Height = %d", mCanvas.getWidth(), mCanvas.getHeight()));
         Log.i("draw", String.format("Canvas X Dist = %d, Canvas Y Dist = %d", X_DISTANCE, Y_DISTANCE));
 
