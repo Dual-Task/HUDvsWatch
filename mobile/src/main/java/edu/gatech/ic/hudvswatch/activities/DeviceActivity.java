@@ -2,6 +2,7 @@ package edu.gatech.ic.hudvswatch.activities;
 
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,30 +31,58 @@ public class DeviceActivity extends AppCompatActivity {
         // Populate paired devices
         LinearLayout deviceListLinearLayout = findViewById(R.id.devices_list);
         for (BluetoothDevice device : BluetoothServer.getPairedDevices()) {
-            deviceListLinearLayout.addView(getDeviceLayout(device));
+            deviceListLinearLayout.addView(getDeviceLayoutForDevice(device));
         }
     }
 
+    /**
+     * An absurdly-compact method that will create a new layout for each connected Bluetooth device
+     * @param device
+     * @return
+     */
     @NonNull
-    private RelativeLayout getDeviceLayout(final BluetoothDevice device) {
+    private RelativeLayout getDeviceLayoutForDevice(final BluetoothDevice device) {
 
         return new RelativeLayout(this) {{
 
+            // No background
             setBackgroundColor(Color.TRANSPARENT);
-            setPadding(5, 5, 5, 5);
-            setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {
-                {
-                    setMargins(0, 0, 0, 5);
-                }
-            });
 
+            // Appropriate margins and padding
+            setPadding(5, 5, 5, 5);
+            setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT) {{
+                setMargins(0, 0, 0, 5);
+            }});
+
+            // Create a bold device name
             final AppCompatTextView deviceTextView = new AppCompatTextView(DeviceActivity.this) {{
+                setId(View.generateViewId());
                 setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                setGravity(Gravity.CENTER_VERTICAL);
-                setText(String.format("%s\nDisconnected\nMAC:%s", device.getName(), device.getAddress()));
+                setText(device.getName());
+                setTypeface(getTypeface(), Typeface.BOLD);
+            }};
+
+            final AppCompatTextView deviceStatusView = new AppCompatTextView(DeviceActivity.this) {{
+                setId(View.generateViewId());
+                setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {{
+                    addRule(RelativeLayout.RIGHT_OF, deviceTextView.getId());
+                    setMargins(10, 0, 0, 0);
+                }});
+                setText("Disconnected");
+                setTypeface(getTypeface(), Typeface.ITALIC);
+            }};
+
+            final AppCompatTextView deviceAddressView = new AppCompatTextView(DeviceActivity.this) {{
+                setId(View.generateViewId());
+                setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {{
+                   addRule(RelativeLayout.BELOW, deviceStatusView.getId());
+                }});
+                setText(device.getAddress());
+                setTypeface(Typeface.MONOSPACE);
             }};
 
             final AppCompatButton connectButton = new AppCompatButton(DeviceActivity.this) {{
+                setId(View.generateViewId());
                 setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT) {{
                     addRule(RelativeLayout.ALIGN_PARENT_END);
                 }});
@@ -64,16 +93,17 @@ public class DeviceActivity extends AppCompatActivity {
             connectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    connectButton.setText("Connecting...");
                     connectToDevice(device, new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
-                            deviceTextView.setText(String.format("%s\nConnected\nMAC:%s", device.getName(), device.getAddress()));
+                            deviceStatusView.setText("Connected");
                             connectButton.setText("Disconnect");
                         }
 
                         @Override
                         public void onDisconnected() {
-                            deviceTextView.setText(String.format("%s\nDisconnected\nMAC:%s", device.getName(), device.getAddress()));
+                            deviceStatusView.setText("Disconnected");
                             connectButton.setText("Connect");
                         }
 
@@ -86,6 +116,8 @@ public class DeviceActivity extends AppCompatActivity {
             });
 
             addView(deviceTextView);
+            addView(deviceStatusView);
+            addView(deviceAddressView);
             addView(connectButton);
         }};
     }

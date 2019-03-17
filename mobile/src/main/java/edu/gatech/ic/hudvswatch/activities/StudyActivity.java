@@ -32,10 +32,9 @@ public class StudyActivity extends AppCompatActivity {
         // Call at after requesting full screen according to https://stackoverflow.com/questions/4250149/requestfeature-must-be-called-before-adding-content
         setContentView(R.layout.activity_study);
 
-        CanvasView canvasView = findViewById(R.id.signature_canvas);
-
         // Get the run information from the intent
         StudyRunInformation studyRunInformation = ((StudyRunInformation) getIntent().getSerializableExtra("studyRunInformation"));
+        CanvasView canvasView = findViewById(R.id.signature_canvas);
         canvasView.setStudyRunInformation(studyRunInformation);
 
 
