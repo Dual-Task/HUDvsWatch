@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public class StudyRunInformation implements Serializable {
-    public static final List<String> AVAILABLE_CONDITIONS = new ArrayList<String>() {{
+    private static final List<String> AVAILABLE_CONDITIONS = new ArrayList<String>() {{
         add("Visual Search");
         add("HUD");
         add("Watch");
@@ -17,9 +17,9 @@ public class StudyRunInformation implements Serializable {
         add("Visual Search + Watch");
     }};
 
-    String subjectId;
-    String condition;
-    boolean isTraining;
+    private String subjectId;
+    private String condition;
+    private boolean isTraining;
 
     public StudyRunInformation(String subjectId, String condition, boolean isTraining) {
         this.subjectId = subjectId;
@@ -27,8 +27,28 @@ public class StudyRunInformation implements Serializable {
         this.isTraining = isTraining;
     }
 
+    public static List<String> getAvailableConditions() {
+        return AVAILABLE_CONDITIONS;
+    }
+
     @Override
     public String toString() {
-        return String.format("Subject ID: %s, Condition: %s, Is Training: %s", subjectId, condition, isTraining);
+        return String.format("Subject ID: %s, Condition: %s, Is Training: %s", getSubjectId(), getCondition(), isTraining());
+    }
+
+    public String getSubjectId() {
+        return subjectId;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public boolean isTraining() {
+        return isTraining;
+    }
+
+    public String isTrainingAsString() {
+        return isTraining ? "TRAINING" : "TESTING";
     }
 }

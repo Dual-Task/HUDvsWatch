@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Add all the available study conditions to the drop-down selector
-        addConditionsToSpinner(StudyRunInformation.AVAILABLE_CONDITIONS);
+        addConditionsToSpinner(StudyRunInformation.getAvailableConditions());
     }
 
     /**

@@ -14,6 +14,9 @@ import edu.gatech.ic.hudvswatch.utils.RandomGridGenerator;
 import edu.gatech.ic.hudvswatch.models.VisualSearchTaskGrid;
 
 
+/**
+ * Handles drawing a number grid to the screen.
+ */
 public class VisualSearchTaskView extends View {
 
     @Override
@@ -27,11 +30,8 @@ public class VisualSearchTaskView extends View {
     private static final String TAG = VisualSearchTaskView.class.getName();
 
     // Constants
-    static final int TEXT_PADDING_LEFT = 10;
-    static final float TEXT_STROKE_WIDTH = 2f;
-    static final float TEXT_SIZE = 24f;
-    static final int CANVAS_MARGIN_TOP = 50;
-    static final int CANVAS_MARGIN_BOTTOM = 50;
+    private static final float TEXT_STROKE_WIDTH = 2f;
+    private static final float TEXT_SIZE = 24f;
 
     VisualSearchTaskGrid mVisualSearchTaskGrid;
 
@@ -45,8 +45,8 @@ public class VisualSearchTaskView extends View {
         setTextSize(TEXT_SIZE);
     }};
 
-    int canvasXStart, canvasXEnd, canvasYStart, canvasYEnd;
-    int canvasWidth, canvasHeight;
+    private int canvasXStart, canvasXEnd, canvasYStart, canvasYEnd;
+    private int canvasWidth, canvasHeight;
 
     public VisualSearchTaskView(Context c, AttributeSet attrs) {
         super(c, attrs);
