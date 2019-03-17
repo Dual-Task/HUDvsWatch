@@ -30,6 +30,8 @@ public class WatchMainActivity extends WearableActivity {
             @Override
             public void onClick(View view) {
                 statusTextView.setText("Connecting...");
+                connectButton.setEnabled(false);
+
                 BluetoothClient bluetoothClient = new BluetoothClient(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
                     @Override
                     public void onConnected() {
@@ -37,6 +39,9 @@ public class WatchMainActivity extends WearableActivity {
                             @Override
                             public void run() {
                                 statusTextView.setText("Connected.");
+
+                                connectButton.setText("Disconnect");
+                                connectButton.setEnabled(true);
                             }
                         });
                     }
@@ -47,6 +52,9 @@ public class WatchMainActivity extends WearableActivity {
                             @Override
                             public void run() {
                                 statusTextView.setText("Disconnected.");
+
+                                connectButton.setText("Connect");
+                                connectButton.setEnabled(true);
                             }
                         });
                     }

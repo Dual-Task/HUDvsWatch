@@ -90,13 +90,15 @@ public class DeviceActivity extends AppCompatActivity {
                     addRule(RelativeLayout.ALIGN_PARENT_END);
                 }});
                 setGravity(Gravity.CENTER_VERTICAL);
-                setText("Connect");
+                setText("Listen");
             }};
 
             connectButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    connectButton.setText("Connecting...");
+                    connectButton.setText("Listening...");
+                    connectButton.setEnabled(false);
+
                     mBluetoothServer = connectToDevice(device, new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
@@ -104,7 +106,9 @@ public class DeviceActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     deviceStatusView.setText("Connected");
+
                                     connectButton.setText("Disconnect");
+                                    connectButton.setEnabled(true);
                                 }
                             });
                             TEMP_sendUpdatesToConnectedDevice();
@@ -116,7 +120,9 @@ public class DeviceActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     deviceStatusView.setText("Disconnected");
-                                    connectButton.setText("Connect");
+
+                                    connectButton.setText("Listen");
+                                    connectButton.setEnabled(true);
                                 }
                             });
                         }
