@@ -3,4 +3,6 @@
     <string name="title_activity_study">StudyActivity</string>
     <string name="title_activity_device">DeviceActivity</string>
     <string name="paired_devices">Paired Devices</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 </resources>

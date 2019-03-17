@@ -1,6 +1,5 @@
 package edu.gatech.ic.hudvswatch.activities;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +7,13 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import edu.gatech.ic.hudvswatch.utils.CanvasView;
 import edu.gatech.ic.hudvswatch.R;
-import edu.gatech.ic.hudvswatch.utils.StudyRunInformation;
+import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
+import edu.gatech.ic.hudvswatch.views.VisualSearchTaskView;
 
 public class StudyActivity extends AppCompatActivity {
+
+    VisualSearchTaskView mVisualSearchTaskView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +35,8 @@ public class StudyActivity extends AppCompatActivity {
 
         // Get the run information from the intent
         StudyRunInformation studyRunInformation = ((StudyRunInformation) getIntent().getSerializableExtra("studyRunInformation"));
-        CanvasView canvasView = findViewById(R.id.signature_canvas);
-        canvasView.setStudyRunInformation(studyRunInformation);
 
+        mVisualSearchTaskView  = findViewById(R.id.visual_search_task_view);
 
     }
 

@@ -9,13 +9,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import edu.gatech.ic.hudvswatch.models.VisualSearchTaskGrid;
+
 /**
  * Created by p13i on 10/29/18.
  */
 
-class RandomGridGenerator {
+public class RandomGridGenerator {
     private static final RandomGridGenerator sInstance = new RandomGridGenerator();
-    static RandomGridGenerator getInstance() {
+    public static RandomGridGenerator getInstance() {
         return sInstance;
     }
 
@@ -35,15 +37,15 @@ class RandomGridGenerator {
     }
 
 
-    int getGridHeight() {
+    public int getGridHeight() {
         return GRID_HEIGHT;
     }
 
-    int getGridWidth() {
+    public int getGridWidth() {
         return GRID_WIDTH;
     }
 
-    VisualSearchTaskGrid getNextGrid() {
+    public VisualSearchTaskGrid getNextGrid() {
         int[][] grid = new int[GRID_HEIGHT][GRID_WIDTH];
 
         // Get the indices where we'll populate numbers
@@ -54,10 +56,10 @@ class RandomGridGenerator {
         List<Integer> randomValues = getRandomValues(shouldIncludeTargetNumberInGrid);
 
         // Just verify a few important things
-        verify(randomNumericalIndices.size() == GRID_NUMBER_OF_VALUES);
-        verify(randomNumericalIndices.size() == randomValues.size());
+        Assert.that(randomNumericalIndices.size() == GRID_NUMBER_OF_VALUES);
+        Assert.that(randomNumericalIndices.size() == randomValues.size());
         if (shouldIncludeTargetNumberInGrid) {
-            verify(Collections.frequency(randomValues, GRID_TARGET_NUMBER) == 1);
+            Assert.that(Collections.frequency(randomValues, GRID_TARGET_NUMBER) == 1);
         }
 
         // Populate the grid
@@ -70,7 +72,7 @@ class RandomGridGenerator {
                     continue;
                 }
 
-                // Fetch the corresponding sRandom value
+                // Fetch the corresponding random value
                 int randomValue = randomValues.get(indexOfNumericalIndexInRandomIndices);
 
                 // Set the value in the grid
@@ -107,7 +109,7 @@ class RandomGridGenerator {
             randomValues = getUniqueRandomInts(GRID_NUMBER_OF_VALUES, GRID_VALUES_LOWER_BOUND, GRID_VALUES_UPPER_BOUND, excludedValues);
         }
 
-        verify(randomValues.size() == GRID_NUMBER_OF_VALUES);
+        Assert.that(randomValues.size() == GRID_NUMBER_OF_VALUES);
 
         return randomValues;
     }

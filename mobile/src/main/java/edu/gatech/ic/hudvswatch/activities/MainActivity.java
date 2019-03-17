@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 import java.util.List;
 
 import edu.gatech.ic.hudvswatch.R;
-import edu.gatech.ic.hudvswatch.utils.StudyRunInformation;
+import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
 
 public class MainActivity extends AppCompatActivity {
 

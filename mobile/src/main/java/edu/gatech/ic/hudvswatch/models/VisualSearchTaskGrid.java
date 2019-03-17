@@ -1,4 +1,6 @@
-package edu.gatech.ic.hudvswatch.utils;
+package edu.gatech.ic.hudvswatch.models;
+
+import edu.gatech.ic.hudvswatch.utils.Assert;
 
 public class VisualSearchTaskGrid {
 
@@ -6,34 +8,34 @@ public class VisualSearchTaskGrid {
     private int numberOfValues;
     private int targetNumber;
 
-    VisualSearchTaskGrid(int[][] grid, int numberOfValues) {
+    public VisualSearchTaskGrid(int[][] grid, int numberOfValues) {
         this.grid = grid;
         this.numberOfValues = numberOfValues;
 
-        Verify.that(this.getNumberOfValuesInGrid() == this.numberOfValues);
-        Verify.that(!this.doesContainTargetNumber());
+        Assert.that(this.getNumberOfValuesInGrid() == this.numberOfValues);
+        Assert.that(!this.doesContainTargetNumber());
     }
 
-    VisualSearchTaskGrid(int[][] grid, int numberOfValues, int targetNumber) {
+    public VisualSearchTaskGrid(int[][] grid, int numberOfValues, int targetNumber) {
         this.grid = grid;
         this.numberOfValues = numberOfValues;
         this.targetNumber = targetNumber;
 
-        Verify.that(this.getNumberOfValuesInGrid() == this.numberOfValues);
-        Verify.that(this.doesContainTargetNumber());
+        Assert.that(this.getNumberOfValuesInGrid() == this.numberOfValues);
+        Assert.that(this.doesContainTargetNumber());
     }
 
-    int[][] getGrid() {
+    public int[][] getGrid() {
         return grid;
     }
 
     int getTargetNumberValue() {
-        Verify.that(this.targetNumber != 0);
-        Verify.that(this.doesContainTargetNumber());
+        Assert.that(this.targetNumber != 0);
+        Assert.that(this.doesContainTargetNumber());
         return this.targetNumber;
     }
 
-    int getNumberOfValuesInGrid() {
+    public int getNumberOfValuesInGrid() {
         int count = 0;
 
         for (int i = 0; i < getGrid().length; i++) {
@@ -47,7 +49,7 @@ public class VisualSearchTaskGrid {
         return count;
     }
 
-    boolean doesContainTargetNumber() {
+    public boolean doesContainTargetNumber() {
         // If the target number is not set, it cannot be included in the grid
         if (this.targetNumber == 0) {
             return false;

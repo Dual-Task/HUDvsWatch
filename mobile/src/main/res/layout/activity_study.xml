@@ -1,15 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context="edu.gatech.ic.hudvswatch.activities.StudyActivity">
 
-    <edu.gatech.ic.hudvswatch.utils.CanvasView
-        android:id="@+id/signature_canvas"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="#FFFFFF" />
+        android:orientation="horizontal">
+
+        <edu.gatech.ic.hudvswatch.views.VisualSearchTaskView
+            android:id="@+id/visual_search_task_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF" />
+
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_toEndOf="@id/visual_search_task_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/study_run_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:layout_marginTop="50dp"
+                android:text="Visual Search" />
+
+            <TextView
+                android:id="@+id/study_run_subject_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/study_run_condition"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="Subject ID" />
+
+            <TextView
+                android:id="@+id/study_run_is_training"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/study_run_subject_id"
+                android:gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="Training" />
+
+            <TextView
+                android:id="@+id/confirm_target_number_response"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/confirm_target_number_YES"
+                android:gravity="center"
+                android:layout_marginTop="-25dp"
+                android:text="Confirm?" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="80dp"
+                android:gravity="center"
+                android:background="#00FF00"
+                android:id="@+id/confirm_target_number_YES"
+                android:text="@string/yes" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
+                android:background="#FF0000"
+                android:gravity="center"
+                android:id="@+id/confirm_target_number_NO"
+                android:text="@string/no" />
+
+        </RelativeLayout>
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

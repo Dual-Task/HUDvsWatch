@@ -1,4 +1,4 @@
-package edu.gatech.ic.hudvswatch.utils;
+package edu.gatech.ic.hudvswatch.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -10,61 +10,62 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import edu.gatech.ic.hudvswatch.utils.RandomGridGenerator;
+import edu.gatech.ic.hudvswatch.models.VisualSearchTaskGrid;
 
-public class CanvasView extends View {
 
-    private static final String TAG = CanvasView.class.getName();
+public class VisualSearchTaskView extends View {
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        int h = getMeasuredHeight();
+        setMeasuredDimension(h, h);
+    }
+
+    private static final String TAG = VisualSearchTaskView.class.getName();
 
     // Constants
     static final int TEXT_PADDING_LEFT = 10;
     static final float TEXT_STROKE_WIDTH = 2f;
     static final float TEXT_SIZE = 24f;
     static final int CANVAS_MARGIN_TOP = 50;
+    static final int CANVAS_MARGIN_BOTTOM = 50;
 
-    Bitmap mBitmap;
+    VisualSearchTaskGrid mVisualSearchTaskGrid;
+
     Canvas mCanvas;
-    Context context;
-    Paint mTextPaint;
+    Paint mTextPaint = new Paint() {{
+        setAntiAlias(true);
+        setColor(Color.BLACK);
+        setStyle(Paint.Style.STROKE);
+        setStrokeJoin(Paint.Join.ROUND);
+        setStrokeWidth(TEXT_STROKE_WIDTH);
+        setTextSize(TEXT_SIZE);
+    }};
 
     int canvasXStart, canvasXEnd, canvasYStart, canvasYEnd;
     int canvasWidth, canvasHeight;
-    int detailXStart, detailXEnd, detailYStart, detailYEnd;
 
-    StudyRunInformation studyRunInformation;
-
-    public CanvasView(Context c, AttributeSet attrs) {
+    public VisualSearchTaskView(Context c, AttributeSet attrs) {
         super(c, attrs);
-        context = c;
-
-        mTextPaint = new Paint();
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setColor(Color.BLACK);
-        mTextPaint.setStyle(Paint.Style.STROKE);
-        mTextPaint.setStrokeJoin(Paint.Join.ROUND);
-        mTextPaint.setStrokeWidth(TEXT_STROKE_WIDTH);
-        mTextPaint.setTextSize(TEXT_SIZE);
-
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(mBitmap);
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(bitmap);
 
         canvasXStart = 0;
-        canvasXEnd = (int) (mCanvas.getWidth() * 0.80);
+        canvasXEnd = mCanvas.getHeight();
         canvasYStart = 0;
         canvasYEnd = mCanvas.getHeight();
 
         canvasWidth = canvasXEnd - canvasXStart;
         canvasHeight = canvasYEnd - canvasYStart;
-
-        detailXStart = canvasXEnd;
-        detailXEnd = mCanvas.getWidth();
-        detailYStart = 0;
-        detailYEnd = mCanvas.getHeight();
 
     }
 
@@ -82,7 +83,7 @@ public class CanvasView extends View {
     }
 
     private void drawNextGrid(Canvas canvas) {
-        VisualSearchTaskGrid visualSearchTaskGrid = RandomGridGenerator.getInstance().getNextGrid();
+        mVisualSearchTaskGrid = RandomGridGenerator.getInstance().getNextGrid();
 
         final int BORDER = 100;
         int xCellCount = RandomGridGenerator.getInstance().getGridWidth();
@@ -95,7 +96,7 @@ public class CanvasView extends View {
 
         for (int i = 0; i < xCellCount; i++) {
             for (int j = 0; j < yCellCount; j++) {
-                int value = visualSearchTaskGrid.getGrid()[i][j];
+                int value = mVisualSearchTaskGrid.getGrid()[i][j];
                 if (value == 0) {
                     continue;
                 }
@@ -106,16 +107,10 @@ public class CanvasView extends View {
             }
         }
 
-        canvas.drawLine(canvasXEnd, canvasYStart, canvasXEnd, canvasYEnd, mTextPaint);
-
-        canvas.drawText(studyRunInformation.condition, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP, mTextPaint);
-        canvas.drawText(studyRunInformation.subjectId, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 50, mTextPaint);
-        canvas.drawText(studyRunInformation.isTraining ? "Training" : "Testing", detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 100, mTextPaint);
-
-        Log.i(TAG, String.format("Drew grid %s target number containing %d values.", visualSearchTaskGrid.doesContainTargetNumber() ? "with" : "without", visualSearchTaskGrid.getNumberOfValuesInGrid()));
+        Log.i(TAG, String.format("Drew grid %s target number containing %d values.", mVisualSearchTaskGrid.doesContainTargetNumber() ? "with" : "without", mVisualSearchTaskGrid.getNumberOfValuesInGrid()));
     }
 
-    public void setStudyRunInformation(StudyRunInformation studyRunInformation) {
-        this.studyRunInformation = studyRunInformation;
+    public VisualSearchTaskGrid getVisualSearchTaskGrid() {
+        return mVisualSearchTaskGrid;
     }
 }

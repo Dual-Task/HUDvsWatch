@@ -1,4 +1,4 @@
-package edu.gatech.ic.hudvswatch.utils;
+package edu.gatech.ic.hudvswatch.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
