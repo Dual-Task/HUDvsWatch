@@ -9,11 +9,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
-import edu.gatech.ic.hudvswatch.views.VisualSearchTaskView;
+import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 public class StudyActivity extends AppCompatActivity {
 
@@ -21,7 +19,7 @@ public class StudyActivity extends AppCompatActivity {
     StudyRunInformation mStudyRunInformation;
 
     // UI Components
-    VisualSearchTaskView mVisualSearchTaskView;
+    VisualSearchView mVisualSearchView;
     TextView mConditionTextView;
     TextView mSubjectIdTextView;
     TextView mIsTrainingTextView;
@@ -52,10 +50,17 @@ public class StudyActivity extends AppCompatActivity {
 
         bindLayoutToActivity();
         setLayoutValuesToStudyRunInformation();
+
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mVisualSearchView.begin();
+//            }
+//        });
     }
 
     private void bindLayoutToActivity() {
-        mVisualSearchTaskView  = findViewById(R.id.visual_search_task_view);
+        mVisualSearchView = findViewById(R.id.visual_search_task_view);
         mConditionTextView = findViewById(R.id.study_run_condition);
         mSubjectIdTextView = findViewById(R.id.study_run_subject_id);
         mIsTrainingTextView = findViewById(R.id.study_run_is_training);

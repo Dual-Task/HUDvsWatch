@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <edu.gatech.ic.hudvswatch.views.VisualSearchTaskView
+        <edu.gatech.ic.hudvswatch.views.VisualSearchView
             android:id="@+id/visual_search_task_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                 android:layout_alignTop="@id/confirm_target_number_YES"
                 android:gravity="center"
                 android:layout_marginTop="-25dp"
-                android:text="Confirm?" />
+                android:text="Contains 57?" />
 
             <Button
                 android:layout_width="match_parent"
