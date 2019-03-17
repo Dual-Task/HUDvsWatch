@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     private void connectToMobile() {
         final TextView statusTextView = (TextView) findViewById(R.id.status);
 
-        BluetoothClient bluetoothClient = new BluetoothClient(new BluetoothEventsListener() {
+        BluetoothClient bluetoothClient = new BluetoothClient(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
             @Override
             public void onConnected() {
                 statusTextView.setText("Connected to mobile.");
@@ -37,8 +37,7 @@ public class MainActivity extends Activity {
                 statusTextView.setText("Received: " + new String(bytes));
             }
         });
-        bluetoothClient.setAddress(Shared.MOBILE_BLUETOOTH_ADDRESS, Shared.SESSION_UUID);
-        bluetoothClient.connect();
+        bluetoothClient.connectToServer(Shared.BLUETOOTH.MAC_ADDRESSES.MOBILE);
     }
 
 }

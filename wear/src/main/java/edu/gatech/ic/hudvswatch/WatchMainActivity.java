@@ -30,7 +30,7 @@ public class WatchMainActivity extends WearableActivity {
             @Override
             public void onClick(View view) {
                 statusTextView.setText("Connecting...");
-                BluetoothClient bluetoothClient = new BluetoothClient(new BluetoothEventsListener() {
+                BluetoothClient bluetoothClient = new BluetoothClient(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
                     @Override
                     public void onConnected() {
                         runOnUiThread(new Runnable() {
@@ -61,8 +61,7 @@ public class WatchMainActivity extends WearableActivity {
                         });
                     }
                 });
-                bluetoothClient.setAddress(Shared.MOBILE_BLUETOOTH_ADDRESS, Shared.SESSION_UUID);
-                bluetoothClient.connect();
+                bluetoothClient.connectToServer(Shared.BLUETOOTH.MAC_ADDRESSES.MOBILE);
             }
         });
     }

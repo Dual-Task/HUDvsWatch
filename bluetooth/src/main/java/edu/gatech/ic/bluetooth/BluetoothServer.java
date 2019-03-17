@@ -36,24 +36,21 @@ public class BluetoothServer {
     private BluetoothSocket btSocket;
     private BluetoothServerSocket btServerSocket;
 
-    private String btAddress;
-    private UUID deviceUUID;
+    private String rfCommServiceRecordName;
+    private UUID rfCommServiceRecordUUID;
 
     private ListenThread listenThread;
     private BluetoothCommunicationThread commThread;
 
 
-    public BluetoothServer(BluetoothEventsListener bluetoothEventsListener) {
+    public BluetoothServer(String rfCommServiceRecordName, UUID rfCommServiceRecordUUID, BluetoothEventsListener bluetoothEventsListener) {
+        this.rfCommServiceRecordName = rfCommServiceRecordName;
+        this.rfCommServiceRecordUUID = rfCommServiceRecordUUID;
         mBluetoothEventsListener = bluetoothEventsListener;
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
-    }
-
-    public void setAddress(String addrs, UUID uuid) {
-        btAddress = addrs;
-        deviceUUID = uuid;
     }
 
 
@@ -103,7 +100,7 @@ public class BluetoothServer {
 
         public ListenThread() {
             try {
-                btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("Bridge", deviceUUID);
+                btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord(rfCommServiceRecordName, rfCommServiceRecordUUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket failed.");
                 cancel();

@@ -159,10 +159,11 @@ public class DeviceActivity extends AppCompatActivity {
     }
 
     private BluetoothServer connectToDevice(BluetoothDevice device, BluetoothEventsListener bluetoothEventsListener) {
-        BluetoothServer bluetoothServer = new BluetoothServer(bluetoothEventsListener);
-        bluetoothServer.setAddress(device.getAddress(), Shared.SESSION_UUID);
+        BluetoothServer bluetoothServer = new BluetoothServer(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.NAME, Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, bluetoothEventsListener);
         bluetoothServer.listen();
+
         Log.d(TAG, "Connected to " + device.getName());
+
         return bluetoothServer;
     }
 

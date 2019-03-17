@@ -23,7 +23,7 @@ public class BluetoothClient {
     private BluetoothSocket btSocket;
 
     private String btAddress;
-    private UUID deviceUUID;
+    private UUID rfCommServiceRecordUUID;
 
     private ConnectThread connectThread;
     private BluetoothCommunicationThread commThread;
@@ -31,29 +31,26 @@ public class BluetoothClient {
     private BluetoothEventsListener mBluetoothEventsListener;
 
 
-    public BluetoothClient(BluetoothEventsListener bluetoothEventsListener) {
+    public BluetoothClient(UUID rfCommServiceRecordUUID, BluetoothEventsListener bluetoothEventsListener) {
+        this.rfCommServiceRecordUUID = rfCommServiceRecordUUID;
         this.mBluetoothEventsListener = bluetoothEventsListener;
         Log.i(TAG, "Creating new ClientBluetooth instance.");
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
     }
 
-    public void setAddress(String addrs, UUID uuid) {
-        btAddress = addrs;
-        deviceUUID = uuid;
-    }
-
 
     //LIFECYCLE
-    public void connect() {
+    public void connectToServer(String serverMacAddress) {
+        btAddress = serverMacAddress;
         mDevice = getBluetoothDevice();
-        Log.d(TAG, "Attempting to connect via bluetooth.");
+        Log.d(TAG, "Attempting to connectToServer via bluetooth.");
         if (mDevice == null) {
             Log.e(TAG, "Failed to find bluetooth device.");
             return;
         }
         if (connectThread != null) {
-            Log.e(TAG, "A connect thread was already running. Cancelling...");
+            Log.e(TAG, "A connectToServer thread was already running. Cancelling...");
             connectThread.cancel();
             Log.d(TAG, "Canceled.");
         }
@@ -64,7 +61,7 @@ public class BluetoothClient {
     public void disconnect() {
         Log.d(TAG, "Disconnecting threads.");
         if (connectThread != null) {
-            Log.d(TAG, "Cancelling the connect thread...");
+            Log.d(TAG, "Cancelling the connectToServer thread...");
             connectThread.cancel();
             Log.d(TAG, "Canceled.");
             connectThread = null;
@@ -115,7 +112,7 @@ public class BluetoothClient {
 
         public ConnectThread() {
             try {
-                btSocket = mDevice.createRfcommSocketToServiceRecord((deviceUUID));
+                btSocket = mDevice.createRfcommSocketToServiceRecord(rfCommServiceRecordUUID);
                 Log.i(TAG, "Client Socket generated.");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to create the client socket.", e);
@@ -126,12 +123,12 @@ public class BluetoothClient {
             btAdapter.cancelDiscovery();
 
             try {
-                Log.d(TAG, "Attempting to connect with Server.");
+                Log.d(TAG, "Attempting to connectToServer with Server.");
                 btSocket.connect();
                 Log.d(TAG, "Connected. Initiating Communications");
                 initiateCommunication(btSocket);
             } catch (Exception e) {
-                Log.e(TAG, "Failed to connect with Server.", e);
+                Log.e(TAG, "Failed to connectToServer with Server.", e);
                 cancel();
             }
         }
