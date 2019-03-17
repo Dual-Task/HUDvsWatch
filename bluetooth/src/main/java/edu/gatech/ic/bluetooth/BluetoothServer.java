@@ -94,6 +94,10 @@ public class BluetoothServer {
         commThread.start();
     }
 
+    public BluetoothCommunicationThread getCommThread() {
+        return commThread;
+    }
+
     private class ListenThread extends Thread {
         private boolean isRunning;
 

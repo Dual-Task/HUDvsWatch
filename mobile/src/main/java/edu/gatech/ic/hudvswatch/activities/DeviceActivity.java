@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import edu.gatech.ic.bluetooth.BluetoothEventsListener;
 import edu.gatech.ic.bluetooth.BluetoothServer;
 import edu.gatech.ic.hudvswatch.R;
@@ -94,7 +97,7 @@ public class DeviceActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     connectButton.setText("Connecting...");
-                    connectToDevice(device, new BluetoothEventsListener() {
+                    mBluetoothServer = connectToDevice(device, new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
                             runOnUiThread(new Runnable() {
@@ -104,6 +107,7 @@ public class DeviceActivity extends AppCompatActivity {
                                     connectButton.setText("Disconnect");
                                 }
                             });
+                            TEMP_sendUpdatesToConnectedDevice();
                         }
 
                         @Override
@@ -132,11 +136,34 @@ public class DeviceActivity extends AppCompatActivity {
         }};
     }
 
-    private void connectToDevice(BluetoothDevice device, BluetoothEventsListener bluetoothEventsListener) {
+    BluetoothServer mBluetoothServer;
+    Timer mTimer = new Timer();
+    private void TEMP_sendUpdatesToConnectedDevice() {
+        mTimer.scheduleAtFixedRate(new TimerTask() {
+            int updatesLeft = 5;
+
+            @Override
+            public void run() {
+                if (updatesLeft == 0) {
+                    mBluetoothServer.disconnect();
+                    this.cancel();
+                    return;
+                }
+
+                String updateText = "Updates left: " + updatesLeft;
+                mBluetoothServer.getCommThread().write(updateText.getBytes());
+
+                updatesLeft--;
+            }
+        }, 0, 1000);
+    }
+
+    private BluetoothServer connectToDevice(BluetoothDevice device, BluetoothEventsListener bluetoothEventsListener) {
         BluetoothServer bluetoothServer = new BluetoothServer(bluetoothEventsListener);
         bluetoothServer.setAddress(device.getAddress(), Shared.SESSION_UUID);
         bluetoothServer.listen();
         Log.d(TAG, "Connected to " + device.getName());
+        return bluetoothServer;
     }
 
 }
