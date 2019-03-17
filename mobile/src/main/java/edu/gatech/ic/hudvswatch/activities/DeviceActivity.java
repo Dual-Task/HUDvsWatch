@@ -97,14 +97,24 @@ public class DeviceActivity extends AppCompatActivity {
                     connectToDevice(device, new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
-                            deviceStatusView.setText("Connected");
-                            connectButton.setText("Disconnect");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    deviceStatusView.setText("Connected");
+                                    connectButton.setText("Disconnect");
+                                }
+                            });
                         }
 
                         @Override
                         public void onDisconnected() {
-                            deviceStatusView.setText("Disconnected");
-                            connectButton.setText("Connect");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    deviceStatusView.setText("Disconnected");
+                                    connectButton.setText("Connect");
+                                }
+                            });
                         }
 
                         @Override
@@ -124,7 +134,8 @@ public class DeviceActivity extends AppCompatActivity {
 
     private void connectToDevice(BluetoothDevice device, BluetoothEventsListener bluetoothEventsListener) {
         BluetoothServer bluetoothServer = new BluetoothServer(bluetoothEventsListener);
-        bluetoothServer.setAddress(Shared.GLASS_BLUETOOTH_ADDRESS, Shared.GLASS_BLUETOOTH_ADDRESS);
+        bluetoothServer.setAddress(device.getAddress(), Shared.SESSION_UUID);
+        bluetoothServer.listen();
         Log.d(TAG, "Connected to " + device.getName());
     }
 

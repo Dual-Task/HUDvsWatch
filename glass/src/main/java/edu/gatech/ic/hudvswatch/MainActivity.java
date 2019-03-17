@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
                 statusTextView.setText("Received: " + new String(bytes));
             }
         });
-        bluetoothClient.setAddress(Shared.MOBILE_BLUETOOTH_ADDRESS, Shared.GLASS_BLUETOOTH_ADDRESS);
+        bluetoothClient.setAddress(Shared.MOBILE_BLUETOOTH_ADDRESS, Shared.SESSION_UUID);
         bluetoothClient.connect();
     }
 

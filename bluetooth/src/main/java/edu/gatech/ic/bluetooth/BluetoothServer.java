@@ -36,7 +36,8 @@ public class BluetoothServer {
     private BluetoothSocket btSocket;
     private BluetoothServerSocket btServerSocket;
 
-    private String btAddress, deviceUUID;
+    private String btAddress;
+    private UUID deviceUUID;
 
     private ListenThread listenThread;
     private BluetoothCommunicationThread commThread;
@@ -50,7 +51,7 @@ public class BluetoothServer {
         state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
     }
 
-    public void setAddress(String addrs, String uuid) {
+    public void setAddress(String addrs, UUID uuid) {
         btAddress = addrs;
         deviceUUID = uuid;
     }
@@ -98,7 +99,7 @@ public class BluetoothServer {
 
         public ListenThread() {
             try {
-                btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("", UUID.fromString(""));
+                btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord("Bridge", deviceUUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket failed.");
                 cancel();
@@ -111,9 +112,9 @@ public class BluetoothServer {
             while (isRunning) {
                 try {
                     Log.d(TAG, "Listening for devices..");
-                    btSocket = btServerSocket.accept(2000);
+                    btSocket = btServerSocket.accept(30000);
                 } catch (Exception e) {
-                    Log.e(TAG, "Timed-out (2000).");
+                    Log.e(TAG, "Timed-out (30000).");
                 }
 
                 if (btSocket != null) {

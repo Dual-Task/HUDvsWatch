@@ -22,7 +22,8 @@ public class BluetoothClient {
     private BluetoothDevice mDevice;
     private BluetoothSocket btSocket;
 
-    private String btAddress, deviceUUID;
+    private String btAddress;
+    private UUID deviceUUID;
 
     private ConnectThread connectThread;
     private BluetoothCommunicationThread commThread;
@@ -37,7 +38,7 @@ public class BluetoothClient {
         state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
     }
 
-    public void setAddress(String addrs, String uuid) {
+    public void setAddress(String addrs, UUID uuid) {
         btAddress = addrs;
         deviceUUID = uuid;
     }
@@ -114,7 +115,7 @@ public class BluetoothClient {
 
         public ConnectThread() {
             try {
-                btSocket = mDevice.createRfcommSocketToServiceRecord(UUID.fromString(deviceUUID));
+                btSocket = mDevice.createRfcommSocketToServiceRecord((deviceUUID));
                 Log.i(TAG, "Client Socket generated.");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to create the client socket.", e);
