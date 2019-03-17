@@ -3,6 +3,7 @@ package edu.gatech.ic.hudvswatch.activities;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -11,9 +12,12 @@ import android.widget.TextView;
 
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
+import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 public class StudyActivity extends AppCompatActivity {
+
+    private static final String TAG = StudyActivity.class.getName();
 
     // Private members
     StudyRunInformation mStudyRunInformation;
@@ -24,8 +28,8 @@ public class StudyActivity extends AppCompatActivity {
     TextView mSubjectIdTextView;
     TextView mIsTrainingTextView;
     TextView mConfirmTextView;
-    Button mYesButton;
-    Button mNoButton;
+    ConfirmButton mYesButton;
+    ConfirmButton mNoButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +53,8 @@ public class StudyActivity extends AppCompatActivity {
         mStudyRunInformation = ((StudyRunInformation) getIntent().getSerializableExtra("studyRunInformation"));
 
         bindLayoutToActivity();
+        bindButtonsToCallbacks();
         setLayoutValuesToStudyRunInformation();
-
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                mVisualSearchView.begin();
-//            }
-//        });
     }
 
     private void bindLayoutToActivity() {
@@ -67,6 +65,25 @@ public class StudyActivity extends AppCompatActivity {
         mConfirmTextView = findViewById(R.id.confirm_target_number_response);
         mYesButton = findViewById(R.id.confirm_target_number_YES);
         mNoButton = findViewById(R.id.confirm_target_number_NO);
+    }
+
+    private void bindButtonsToCallbacks() {
+        mYesButton.setDefaultText("YES");
+        mYesButton.setOnConfirmedListener(new ConfirmButton.OnConfirmedListener() {
+            @Override
+            public void onConfirmed(View v) {
+                mYesButton.resetButton();
+                Log.i(TAG, "Yes button confirmed.");
+            }
+        });
+        mNoButton.setDefaultText("NO");
+        mNoButton.setOnConfirmedListener(new ConfirmButton.OnConfirmedListener() {
+            @Override
+            public void onConfirmed(View v) {
+                mYesButton.resetButton();
+                Log.i(TAG, "No button confirmed.");
+            }
+        });
     }
 
     private void setLayoutValuesToStudyRunInformation() {

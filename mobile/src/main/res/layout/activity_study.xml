@@ -60,7 +60,7 @@
                 android:layout_marginTop="-25dp"
                 android:text="Contains 57?" />
 
-            <Button
+            <edu.gatech.ic.hudvswatch.ui.ConfirmButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -70,7 +70,7 @@
                 android:id="@+id/confirm_target_number_YES"
                 android:text="@string/yes" />
 
-            <Button
+            <edu.gatech.ic.hudvswatch.ui.ConfirmButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"

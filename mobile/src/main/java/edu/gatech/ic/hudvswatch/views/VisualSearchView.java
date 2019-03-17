@@ -52,25 +52,25 @@ public class VisualSearchView extends View {
             setTextSize(120f);
         }};
 
-        static  Paint mCompletedTextPaint = new Paint() {{
+        static Paint mCompletedTextPaint = new Paint() {{
             setAntiAlias(true);
             setColor(Color.GREEN);
             setStyle(Paint.Style.STROKE);
             setStrokeJoin(Paint.Join.ROUND);
-            setStrokeWidth(55);
+            setStrokeWidth(5f);
             setTextSize(96f);
         }};
 
-        static  Paint mCountdownTextPaint = new Paint() {{
+        static Paint mCountdownTextPaint = new Paint() {{
             setAntiAlias(true);
             setColor(Color.GREEN);
             setStyle(Paint.Style.STROKE);
             setStrokeJoin(Paint.Join.ROUND);
-            setStrokeWidth(8f);
+            setStrokeWidth(6f);
             setTextSize(96f);
         }};
 
-        static  Paint mNumberTextPaint = new Paint() {{
+        static Paint mNumberTextPaint = new Paint() {{
             setAntiAlias(true);
             setColor(Color.BLACK);
             setStyle(Paint.Style.STROKE);
@@ -185,7 +185,7 @@ public class VisualSearchView extends View {
     }
 
     private void drawNextCountdownValue() {
-        this.drawTextInViewCenter(Integer.toString(mCurrentCountdownValue),TextPaints. mCountdownTextPaint);
+        this.drawTextInViewCenter(Integer.toString(mCurrentCountdownValue), TextPaints.mCountdownTextPaint);
     }
 
     private void drawNextGrid() {
@@ -212,6 +212,8 @@ public class VisualSearchView extends View {
                 mCanvas.drawText(Integer.toString(value), x, y, TextPaints.mNumberTextPaint);
             }
         }
+
+        mCanvas.drawRect(0, 0, mCanvasXEnd, mCanvasYEnd, TextPaints.mNumberTextPaint);
 
         Log.i(TAG, String.format("Drew grid %s target number containing %d values.", mVisualSearchTaskGrid.doesContainTargetNumber() ? "with" : "without", mVisualSearchTaskGrid.getNumberOfValuesInGrid()));
     }
