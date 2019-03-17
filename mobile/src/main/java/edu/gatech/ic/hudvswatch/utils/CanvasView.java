@@ -13,6 +13,8 @@ import android.view.View;
 
 public class CanvasView extends View {
 
+    private static final String TAG = CanvasView.class.getName();
+
     // Constants
     static final int TEXT_PADDING_LEFT = 10;
     static final float TEXT_STROKE_WIDTH = 2f;
@@ -80,7 +82,7 @@ public class CanvasView extends View {
     }
 
     private void drawNextGrid(Canvas canvas) {
-        int[][] numberGrid = RandomGridGenerator.getInstance().getNextGrid();
+        VisualSearchTaskGrid visualSearchTaskGrid = RandomGridGenerator.getInstance().getNextGrid();
 
         final int BORDER = 100;
         int xCellCount = RandomGridGenerator.getInstance().getGridWidth();
@@ -88,12 +90,12 @@ public class CanvasView extends View {
         final int X_DISTANCE = ((canvasWidth - BORDER) / xCellCount);
         final int Y_DISTANCE = ((canvasHeight - BORDER) / yCellCount);
 
-        Log.i("draw", String.format("Canvas Width = %d, Canvas Height = %d", mCanvas.getWidth(), mCanvas.getHeight()));
-        Log.i("draw", String.format("Canvas X Dist = %d, Canvas Y Dist = %d", X_DISTANCE, Y_DISTANCE));
+        Log.i(TAG, String.format("Canvas Width = %d, Canvas Height = %d", mCanvas.getWidth(), mCanvas.getHeight()));
+        Log.i(TAG, String.format("Canvas X Dist = %d, Canvas Y Dist = %d", X_DISTANCE, Y_DISTANCE));
 
         for (int i = 0; i < xCellCount; i++) {
             for (int j = 0; j < yCellCount; j++) {
-                int value = numberGrid[i][j];
+                int value = visualSearchTaskGrid.getGrid()[i][j];
                 if (value == 0) {
                     continue;
                 }
@@ -106,9 +108,11 @@ public class CanvasView extends View {
 
         canvas.drawLine(canvasXEnd, canvasYStart, canvasXEnd, canvasYEnd, mTextPaint);
 
-        canvas.drawText(this.studyRunInformation.condition, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP, mTextPaint);
-        canvas.drawText(this.studyRunInformation.subjectId, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 50, mTextPaint);
-        canvas.drawText(this.studyRunInformation.isTraining ? "Training" : "Testing", detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 100, mTextPaint);
+        canvas.drawText(studyRunInformation.condition, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP, mTextPaint);
+        canvas.drawText(studyRunInformation.subjectId, detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 50, mTextPaint);
+        canvas.drawText(studyRunInformation.isTraining ? "Training" : "Testing", detailXStart + TEXT_PADDING_LEFT, detailYStart + CANVAS_MARGIN_TOP + 100, mTextPaint);
+
+        Log.i(TAG, String.format("Drew grid %s target number containing %d values.", visualSearchTaskGrid.doesContainTargetNumber() ? "with" : "without", visualSearchTaskGrid.getNumberOfValuesInGrid()));
     }
 
     public void setStudyRunInformation(StudyRunInformation studyRunInformation) {
