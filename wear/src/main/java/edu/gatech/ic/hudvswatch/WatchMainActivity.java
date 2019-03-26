@@ -1,5 +1,6 @@
 package edu.gatech.ic.hudvswatch;
 
+import android.content.Intent;
 import android.support.wearable.activity.WearableActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import edu.gatech.ic.bluetooth.BluetoothClient;
 import edu.gatech.ic.bluetooth.BluetoothEventsListener;
 import edu.gatech.ic.hudvswatch.shared.Shared;
+import edu.gatech.ic.hudvswatch.utils.SharedBluetoothDeviceManager;
 
 public class WatchMainActivity extends WearableActivity {
 
@@ -17,12 +19,15 @@ public class WatchMainActivity extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_main);
-        // Keep the screen on: https://developer.android.com/training/scheduling/wakelock.html#screen
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setupViews();
 
+        // Enables Always-on
         setAmbientEnabled();
+
+        // Keep the screen on: https://developer.android.com/training/scheduling/wakelock.html#screen
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
     }
 
     void setupViews() {
@@ -41,10 +46,7 @@ public class WatchMainActivity extends WearableActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                statusTextView.setText("Connected.");
-
-                                connectButton.setText("Disconnect");
-                                connectButton.setEnabled(true);
+                                startActivity(new Intent(WatchMainActivity.this, WatchStudyActivity.class));
                             }
                         });
                     }
@@ -54,10 +56,7 @@ public class WatchMainActivity extends WearableActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                statusTextView.setText("Disconnected.");
-
-                                connectButton.setText("Connect");
-                                connectButton.setEnabled(true);
+                                statusTextView.setText("Disconnected...");
                             }
                         });
                     }
@@ -65,42 +64,11 @@ public class WatchMainActivity extends WearableActivity {
                     @Override
                     public void onReceive(final byte[] bytes) {
 
-                        String message = new String(bytes);
-                        if (message.equals("Countdown started")) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    statusTextView.setText("Countdown started");
-                                }
-                            });
-                        }
-                        if (message.equals("Study started")) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    statusTextView.setText("Study started");
-                                }
-                            });
-                        } else if (message.startsWith("Notification: ")) {
-                            final int number = Integer.parseInt(message.substring(14, 15));
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    statusTextView.setText(String.format("Received notification: %d", number));
-                                }
-                            });
-                        } else if (message.equals("Completed")) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    statusTextView.setText("Completed");
-                                }
-                            });
-                        }
-
                     }
                 });
                 bluetoothClient.connectToServer(Shared.BLUETOOTH.MAC_ADDRESSES.MOBILE);
+
+                SharedBluetoothDeviceManager.getInstance().setSharedBluetoothClient(bluetoothClient);
             }
         });
     }

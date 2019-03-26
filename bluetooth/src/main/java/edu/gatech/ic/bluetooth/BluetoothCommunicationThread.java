@@ -112,4 +112,8 @@ public class BluetoothCommunicationThread extends Thread {
         mBluetoothListener.onDisconnected();
     }
 
+    public void setBluetoothEventsListener(BluetoothEventsListener bluetoothEventsListener) {
+        mBluetoothListener = bluetoothEventsListener;
+    }
+
 }

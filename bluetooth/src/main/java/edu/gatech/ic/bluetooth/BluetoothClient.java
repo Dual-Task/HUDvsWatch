@@ -148,5 +148,9 @@ public class BluetoothClient {
             }
         }
     }
+
+    public BluetoothCommunicationThread getCommunicationThread() {
+        return commThread;
+    }
 }
 
