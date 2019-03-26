@@ -6,4 +6,8 @@ public class Assert {
             throw new AssertionError("Condition failed");
         }
     }
+
+    public static void fail() {
+        throw new AssertionError("Assertion failed");
+    }
 }

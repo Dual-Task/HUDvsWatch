@@ -229,6 +229,9 @@ public class VisualSearchView extends View {
 
     public void startNewVisualSearchTaskAfterYesOrNoPressed() {
         Assert.that(mMode == Mode.VISUAL_SEARCH);
+
+
+
         mVisualSearchTaskViewTimer.cancel();
         mVisualSearchTaskViewTimer.purge();
         mVisualSearchTaskViewTimer = new Timer();

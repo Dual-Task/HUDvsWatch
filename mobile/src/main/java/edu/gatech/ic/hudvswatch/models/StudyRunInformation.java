@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.gatech.ic.hudvswatch.shared.Shared;
+import edu.gatech.ic.hudvswatch.utils.Assert;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 /**
@@ -67,5 +69,16 @@ public class StudyRunInformation implements Serializable {
 
     public boolean doesConditionInvolveBluetoothDevice() {
         return !condition.equals(AvailableConditions.VISUAL_SEARCH);
+    }
+
+    public String getRequiredDeviceName() {
+        Assert.that(doesConditionInvolveBluetoothDevice());
+        if (condition.equals(AvailableConditions.HUD) || condition.equals(AvailableConditions.VISUAL_SEARCH_AND_HUD)) {
+            return Shared.BLUETOOTH.DEVICE_NAMES.HUD;
+        } else if (condition.equals(AvailableConditions.WATCH) || condition.equals(AvailableConditions.VISUAL_SEARCH_AND_WATCH)) {
+            return Shared.BLUETOOTH.DEVICE_NAMES.WATCH;
+        }
+        Assert.fail();
+        return null;
     }
 }

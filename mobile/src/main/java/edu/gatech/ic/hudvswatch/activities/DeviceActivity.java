@@ -1,6 +1,8 @@
 package edu.gatech.ic.hudvswatch.activities;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -31,6 +33,7 @@ public class DeviceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Populate paired devices
         LinearLayout deviceListLinearLayout = findViewById(R.id.devices_list);
@@ -137,8 +140,7 @@ public class DeviceActivity extends AppCompatActivity {
 
                     Log.d(TAG, "Connected to " + device.getName());
 
-                    SharedBluetoothServerManager.getInstance().setDeviceName(device.getName());
-                    SharedBluetoothServerManager.getInstance().setBluetoothServer(bluetoothServer);
+                    SharedBluetoothServerManager.getInstance().setBluetoothServer(device.getName(), bluetoothServer);
                 }
             });
 

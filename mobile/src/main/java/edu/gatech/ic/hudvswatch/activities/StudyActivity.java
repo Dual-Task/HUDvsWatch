@@ -1,7 +1,10 @@
 package edu.gatech.ic.hudvswatch.activities;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +17,7 @@ import java.util.List;
 import edu.gatech.ic.bluetooth.BluetoothServer;
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
+import edu.gatech.ic.hudvswatch.shared.Shared;
 import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
 import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
@@ -59,6 +63,8 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
         bindButtonsToCallbacks();
         setLayoutValuesToStudyRunInformation();
         bindActivityToListeners();
+
+        ensureRequiredDevicesAreConnected();
     }
 
     private void bindLayoutToActivity() {
@@ -114,6 +120,37 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
 
     private void bindActivityToListeners() {
         mVisualSearchView.setVisualSearchTaskEventsListener(this);
+    }
+
+    private void ensureRequiredDevicesAreConnected() {
+        if (mStudyRunInformation.doesConditionInvolveBluetoothDevice())
+            if (!SharedBluetoothServerManager.getInstance().isDeviceConnected()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("No device connected")
+                        .setMessage(String.format("A Bluetooth device is required for this %s condition, but none is connected", mStudyRunInformation.getCondition()))
+                        .setPositiveButton("Devices...", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(StudyActivity.this, DeviceActivity.class));
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setCancelable(false)
+                        .show();
+            } else if (!mStudyRunInformation.getRequiredDeviceName().equals(SharedBluetoothServerManager.getInstance().getDeviceName())) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Wrong device connected")
+                        .setMessage(String.format("%s is required for this %s condition, but %s is connected", mStudyRunInformation.getRequiredDeviceName(), mStudyRunInformation.getCondition(), SharedBluetoothServerManager.getInstance().getDeviceName()))
+                        .setPositiveButton("Devices...", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                startActivity(new Intent(StudyActivity.this, DeviceActivity.class));
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setCancelable(false)
+                        .show();
+            }
     }
 
     @Override
