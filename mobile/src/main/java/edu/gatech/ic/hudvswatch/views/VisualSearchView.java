@@ -19,6 +19,7 @@ import java.util.TimerTask;
 import edu.gatech.ic.hudvswatch.utils.Assert;
 import edu.gatech.ic.hudvswatch.utils.RandomGridGenerator;
 import edu.gatech.ic.hudvswatch.models.VisualSearchTaskGrid;
+import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 
 
 /**
@@ -310,6 +311,8 @@ public class VisualSearchView extends View {
             if (mVisualSearchTasksLeft == 0) {
                 this.cancel();
                 mVisualSearchTaskViewTimer.cancel();
+                SharedBluetoothServerManager.getInstance().getBluetoothServer().getCommThread().write("Completed".getBytes());
+                mNotificationTimer.cancel();
                 // Show the completed screen
                 mMode = Mode.COMPLETED;
                 mVisualSearchViewEventsListener.onVisualSearchTaskCompleted();
