@@ -6,11 +6,13 @@ import android.util.AttributeSet;
 import android.view.View;
 
 
+/**
+ * A button that requires two taps to confirm an action
+ */
 public class ConfirmButton extends AppCompatButton implements View.OnClickListener {
-    private static final int DEFAULT_CONFIRM_TAPS = 2;
-    int mConfirmTapsLeft = DEFAULT_CONFIRM_TAPS;
+    boolean mIsTappedOnce;
     String mDefaultText;
-    OnConfirmedListener mOnConfirmedListener;
+    ConfirmButtonListener mConfirmButtonListener;
 
     public ConfirmButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -33,11 +35,13 @@ public class ConfirmButton extends AppCompatButton implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if (--mConfirmTapsLeft == 0) {
-            mOnConfirmedListener.onConfirmed(this);
-            resetButton();
+        if (!mIsTappedOnce) {
+            mIsTappedOnce = true;
+            mConfirmButtonListener.onFirstTap();
+            setText(String.format("%s (tap again to confirm)", mDefaultText));
         } else {
-            setText(String.format("%s (%d x confirm?)", mDefaultText, mConfirmTapsLeft));
+            mConfirmButtonListener.onConfirmed();
+            resetButton();
         }
     }
 
@@ -46,15 +50,16 @@ public class ConfirmButton extends AppCompatButton implements View.OnClickListen
     }
 
     public void resetButton() {
-        mConfirmTapsLeft = DEFAULT_CONFIRM_TAPS;
+        mIsTappedOnce = false;
         setText(mDefaultText);
     }
 
-    public void setOnConfirmedListener(OnConfirmedListener onConfirmedListener) {
-        mOnConfirmedListener = onConfirmedListener;
+    public void setOnConfirmedListener(ConfirmButtonListener confirmButtonListener) {
+        mConfirmButtonListener = confirmButtonListener;
     }
 
-    public interface OnConfirmedListener {
-        void onConfirmed(View v);
+    public interface ConfirmButtonListener {
+        void onFirstTap();
+        void onConfirmed();
     }
 }

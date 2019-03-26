@@ -94,6 +94,7 @@ public class VisualSearchView extends View {
     VisualSearchTaskGrid mVisualSearchTaskGrid;
     private Mode mMode = Mode.START;
     Canvas mCanvas;
+    VisualSearchViewEventsListener mVisualSearchViewEventsListener;
 
     private int mCanvasXStart, mCanvasXEnd, mCanvasYStart, mCanvasYEnd;
     private int mCanvasWidth, mCanvasHeight;
@@ -220,6 +221,18 @@ public class VisualSearchView extends View {
 
     //endregion Drawing
 
+    //region Task Methods
+
+    public void startNewVisualSearchTaskAfterYesOrNoPressed() {
+        Assert.that(mMode == Mode.VISUAL_SEARCH);
+        mTimer.cancel();
+        mTimer.purge();
+        mTimer = new Timer();
+        mTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
+    }
+
+    //endregion Task Methods
+
     //region Helpers
 
     private void triggerRedraw() {
@@ -255,6 +268,7 @@ public class VisualSearchView extends View {
                 mMode = Mode.VISUAL_SEARCH;
                 mTimer = new Timer();
                 mTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
+                mVisualSearchViewEventsListener.onVisualSearchTaskFirstStart();
                 return;
             }
 
@@ -276,6 +290,7 @@ public class VisualSearchView extends View {
                 mTimer.cancel();
                 // Show the completed screen
                 mMode = Mode.COMPLETED;
+                mVisualSearchViewEventsListener.onVisualSearchTaskCompleted();
                 VisualSearchView.this.triggerRedraw();
                 return;
             }
@@ -285,5 +300,14 @@ public class VisualSearchView extends View {
             Log.d(TAG, "Number of remaining search tasks: " + mVisualSearchTasksLeft);
             mVisualSearchTasksLeft--;
         }
+    }
+
+    public void setVisualSearchTaskEventsListener(VisualSearchViewEventsListener listener) {
+        mVisualSearchViewEventsListener = listener;
+    }
+
+    public interface VisualSearchViewEventsListener {
+        void onVisualSearchTaskFirstStart();
+        void onVisualSearchTaskCompleted();
     }
 }

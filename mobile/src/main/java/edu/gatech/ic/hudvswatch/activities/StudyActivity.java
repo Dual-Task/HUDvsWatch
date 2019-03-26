@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import edu.gatech.ic.hudvswatch.R;
@@ -15,7 +14,7 @@ import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
 import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
-public class StudyActivity extends AppCompatActivity {
+public class StudyActivity extends AppCompatActivity implements VisualSearchView.VisualSearchViewEventsListener {
 
     private static final String TAG = StudyActivity.class.getName();
 
@@ -55,6 +54,7 @@ public class StudyActivity extends AppCompatActivity {
         bindLayoutToActivity();
         bindButtonsToCallbacks();
         setLayoutValuesToStudyRunInformation();
+        bindActivityToListeners();
     }
 
     private void bindLayoutToActivity() {
@@ -69,21 +69,37 @@ public class StudyActivity extends AppCompatActivity {
 
     private void bindButtonsToCallbacks() {
         mYesButton.setDefaultText("YES");
-        mYesButton.setOnConfirmedListener(new ConfirmButton.OnConfirmedListener() {
+        mYesButton.setOnConfirmedListener(new ConfirmButton.ConfirmButtonListener() {
             @Override
-            public void onConfirmed(View v) {
+            public void onFirstTap() {
+                // Reset the other button
+                mNoButton.resetButton();
+            }
+
+            @Override
+            public void onConfirmed() {
                 mYesButton.resetButton();
                 Log.i(TAG, "Yes button confirmed.");
+                mVisualSearchView.startNewVisualSearchTaskAfterYesOrNoPressed();
             }
         });
         mNoButton.setDefaultText("NO");
-        mNoButton.setOnConfirmedListener(new ConfirmButton.OnConfirmedListener() {
+        mNoButton.setOnConfirmedListener(new ConfirmButton.ConfirmButtonListener() {
             @Override
-            public void onConfirmed(View v) {
+            public void onFirstTap() {
+                // Reset the other button
+                mYesButton.resetButton();
+            }
+
+            @Override
+            public void onConfirmed() {
                 mYesButton.resetButton();
                 Log.i(TAG, "No button confirmed.");
+                mVisualSearchView.startNewVisualSearchTaskAfterYesOrNoPressed();
             }
         });
+        mYesButton.setEnabled(false);
+        mNoButton.setEnabled(false);
     }
 
     private void setLayoutValuesToStudyRunInformation() {
@@ -92,4 +108,29 @@ public class StudyActivity extends AppCompatActivity {
         mIsTrainingTextView.setText(mStudyRunInformation.isTrainingAsString());
     }
 
+    private void bindActivityToListeners() {
+        mVisualSearchView.setVisualSearchTaskEventsListener(this);
+    }
+
+    @Override
+    public void onVisualSearchTaskFirstStart() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mYesButton.setEnabled(true);
+                mNoButton.setEnabled(true);
+            }
+        });
+    }
+
+    @Override
+    public void onVisualSearchTaskCompleted() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mYesButton.setEnabled(false);
+                mNoButton.setEnabled(false);
+            }
+        });
+    }
 }
