@@ -154,6 +154,15 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
     }
 
     @Override
+    public void onCountdownStarted() {
+        String message = "Countdown started";
+        SharedBluetoothServerManager.getInstance()
+                .getBluetoothServer()
+                .getCommThread()
+                .write(message.getBytes());
+    }
+
+    @Override
     public void onVisualSearchTaskFirstStart() {
         runOnUiThread(new Runnable() {
             @Override
@@ -162,17 +171,23 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
                 mNoButton.setEnabled(true);
             }
         });
+        String message = "Study started";
+        SharedBluetoothServerManager.getInstance()
+                .getBluetoothServer()
+                .getCommThread()
+                .write(message.getBytes());
     }
 
     @Override
     public void onActivityShouldSendNotification(int number) {
         Log.i(TAG, String.format("Should send number: %d", number));
         if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
-            Log.i(TAG, String.format("Sending %d to %s.", number, SharedBluetoothServerManager.getInstance().getDeviceName()));
+            String message = String.format("Notification: %d", number);
+            Log.i(TAG, String.format("Sending message to %s: %s", SharedBluetoothServerManager.getInstance().getDeviceName(), message));
             SharedBluetoothServerManager.getInstance()
                     .getBluetoothServer()
                     .getCommThread()
-                    .write(Integer.toString(number).getBytes());
+                    .write(message.getBytes());
         }
     }
 
@@ -185,5 +200,11 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
                 mNoButton.setEnabled(false);
             }
         });
+
+        String message = "Completed";
+        SharedBluetoothServerManager.getInstance()
+                .getBluetoothServer()
+                .getCommThread()
+                .write(message.getBytes());
     }
 }

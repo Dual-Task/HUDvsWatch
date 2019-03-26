@@ -64,12 +64,40 @@ public class WatchMainActivity extends WearableActivity {
 
                     @Override
                     public void onReceive(final byte[] bytes) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                statusTextView.setText("Received: " + new String(bytes));
-                            }
-                        });
+
+                        String message = new String(bytes);
+                        if (message.equals("Countdown started")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusTextView.setText("Countdown started");
+                                }
+                            });
+                        }
+                        if (message.equals("Study started")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusTextView.setText("Study started");
+                                }
+                            });
+                        } else if (message.startsWith("Notification: ")) {
+                            final int number = Integer.parseInt(message.substring(14, 15));
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusTextView.setText(String.format("Received notification: %d", number));
+                                }
+                            });
+                        } else if (message.equals("Completed")) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    statusTextView.setText("Completed");
+                                }
+                            });
+                        }
+
                     }
                 });
                 bluetoothClient.connectToServer(Shared.BLUETOOTH.MAC_ADDRESSES.MOBILE);

@@ -1,7 +1,6 @@
 package edu.gatech.ic.hudvswatch.activities;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -17,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import java.util.Timer;
-import java.util.TimerTask;
 
 import edu.gatech.ic.bluetooth.BluetoothEventsListener;
 import edu.gatech.ic.bluetooth.BluetoothServer;
@@ -140,7 +137,7 @@ public class DeviceActivity extends AppCompatActivity {
 
                     Log.d(TAG, "Connected to " + device.getName());
 
-                    SharedBluetoothServerManager.getInstance().setBluetoothServer(device.getName(), bluetoothServer);
+                    SharedBluetoothServerManager.getInstance().setConnectedDevice(device.getName(), bluetoothServer);
                 }
             });
 

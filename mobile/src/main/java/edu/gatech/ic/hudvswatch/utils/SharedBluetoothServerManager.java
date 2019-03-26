@@ -16,8 +16,10 @@ public class SharedBluetoothServerManager {
     private SharedBluetoothServerManager() {
     }
 
-    public void setBluetoothServer(String deviceName, BluetoothServer bluetoothServer) {
+    public void setConnectedDevice(String deviceName, BluetoothServer bluetoothServer) {
+        mDeviceName = deviceName;
         mBluetoothServer = bluetoothServer;
+        mIsDeviceConnected = true;
     }
 
     public BluetoothServer getBluetoothServer() {
@@ -26,6 +28,12 @@ public class SharedBluetoothServerManager {
 
     public String getDeviceName() {
         return mDeviceName;
+    }
+
+    public void clearDevice() {
+        mDeviceName = null;
+        mBluetoothServer = null;
+        mIsDeviceConnected = false;
     }
 
     public boolean isDeviceConnected() {

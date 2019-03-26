@@ -169,6 +169,8 @@ public class VisualSearchView extends View {
                 mVisualSearchTaskViewTimer.purge();
                 mVisualSearchTaskViewTimer = new Timer();
                 mVisualSearchTaskViewTimer.scheduleAtFixedRate(new CountdownTimerTask(), 0, COUNTDOWN_DISPLAY_DURATION);
+
+                mVisualSearchViewEventsListener.onCountdownStarted();
             } else {
                 this.triggerRedraw();
             }
@@ -346,6 +348,7 @@ public class VisualSearchView extends View {
     }
 
     public interface VisualSearchViewEventsListener {
+        void onCountdownStarted();
         void onVisualSearchTaskFirstStart();
         void onActivityShouldSendNotification(int number);
         void onVisualSearchTaskCompleted();
