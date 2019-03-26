@@ -9,9 +9,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.List;
+
+import edu.gatech.ic.bluetooth.BluetoothServer;
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
 import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
+import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 public class StudyActivity extends AppCompatActivity implements VisualSearchView.VisualSearchViewEventsListener {
@@ -121,6 +125,18 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
                 mNoButton.setEnabled(true);
             }
         });
+    }
+
+    @Override
+    public void onActivityShouldSendNotification(int number) {
+        Log.i(TAG, String.format("Should send number: %d", number));
+        if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
+            Log.i(TAG, String.format("Sending %d to %s.", number, SharedBluetoothServerManager.getInstance().getDeviceName()));
+            SharedBluetoothServerManager.getInstance()
+                    .getBluetoothServer()
+                    .getCommThread()
+                    .write(Integer.toString(number).getBytes());
+        }
     }
 
     @Override

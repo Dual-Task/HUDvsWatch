@@ -22,6 +22,7 @@ import edu.gatech.ic.bluetooth.BluetoothEventsListener;
 import edu.gatech.ic.bluetooth.BluetoothServer;
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.shared.Shared;
+import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 
 public class DeviceActivity extends AppCompatActivity {
     static final String TAG = DeviceActivity.class.getName();
@@ -99,7 +100,8 @@ public class DeviceActivity extends AppCompatActivity {
                     connectButton.setText("Listening...");
                     connectButton.setEnabled(false);
 
-                    mBluetoothServer = connectToDevice(device, new BluetoothEventsListener() {
+
+                    BluetoothServer bluetoothServer = new BluetoothServer(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.NAME, Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
                             runOnUiThread(new Runnable() {
@@ -111,7 +113,6 @@ public class DeviceActivity extends AppCompatActivity {
                                     connectButton.setEnabled(true);
                                 }
                             });
-                            TEMP_sendUpdatesToConnectedDevice();
                         }
 
                         @Override
@@ -132,6 +133,12 @@ public class DeviceActivity extends AppCompatActivity {
 
                         }
                     });
+                    bluetoothServer.listen();
+
+                    Log.d(TAG, "Connected to " + device.getName());
+
+                    SharedBluetoothServerManager.getInstance().setDeviceName(device.getName());
+                    SharedBluetoothServerManager.getInstance().setBluetoothServer(bluetoothServer);
                 }
             });
 
@@ -141,36 +148,4 @@ public class DeviceActivity extends AppCompatActivity {
             addView(connectButton);
         }};
     }
-
-    BluetoothServer mBluetoothServer;
-    Timer mTimer = new Timer();
-    private void TEMP_sendUpdatesToConnectedDevice() {
-        mTimer.scheduleAtFixedRate(new TimerTask() {
-            int updatesLeft = 5;
-
-            @Override
-            public void run() {
-                if (updatesLeft == 0) {
-                    mBluetoothServer.disconnect();
-                    this.cancel();
-                    return;
-                }
-
-                String updateText = "Updates left: " + updatesLeft;
-                mBluetoothServer.getCommThread().write(updateText.getBytes());
-
-                updatesLeft--;
-            }
-        }, 0, 1000);
-    }
-
-    private BluetoothServer connectToDevice(BluetoothDevice device, BluetoothEventsListener bluetoothEventsListener) {
-        BluetoothServer bluetoothServer = new BluetoothServer(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.NAME, Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, bluetoothEventsListener);
-        bluetoothServer.listen();
-
-        Log.d(TAG, "Connected to " + device.getName());
-
-        return bluetoothServer;
-    }
-
 }

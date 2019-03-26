@@ -55,7 +55,7 @@ public class BluetoothCommunicationThread extends Thread {
             try {
                 byte[] buffer = new byte[1024];
                 int numBytes;
-                while ((numBytes = connectedInputStream.read(buffer)) != 1) {
+                while ((numBytes = connectedInputStream.read(buffer)) != -1) {
                     byte[] bytes = Arrays.copyOf(buffer, numBytes);
                     mBluetoothListener.onReceive(bytes);
                 }

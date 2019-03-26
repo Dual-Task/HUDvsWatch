@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -90,7 +91,9 @@ public class VisualSearchView extends View {
     private int mVisualSearchTasksLeft = 10;
 
     // Other instance fields
-    private Timer mTimer = new Timer();
+    private Random mRandom = new Random(42);
+    private Timer mVisualSearchTaskViewTimer = new Timer();
+    private Timer mNotificationTimer = new Timer();
     VisualSearchTaskGrid mVisualSearchTaskGrid;
     private Mode mMode = Mode.START;
     Canvas mCanvas;
@@ -161,10 +164,10 @@ public class VisualSearchView extends View {
         if (mMode == Mode.START) {
             if (--mStartConfirmTapsLeft == 0) {
                 mMode = Mode.COUNTDOWN;
-                mTimer.cancel();
-                mTimer.purge();
-                mTimer = new Timer();
-                mTimer.scheduleAtFixedRate(new CountdownTimerTask(), 0, COUNTDOWN_DISPLAY_DURATION);
+                mVisualSearchTaskViewTimer.cancel();
+                mVisualSearchTaskViewTimer.purge();
+                mVisualSearchTaskViewTimer = new Timer();
+                mVisualSearchTaskViewTimer.scheduleAtFixedRate(new CountdownTimerTask(), 0, COUNTDOWN_DISPLAY_DURATION);
             } else {
                 this.triggerRedraw();
             }
@@ -221,17 +224,24 @@ public class VisualSearchView extends View {
 
     //endregion Drawing
 
-    //region Task Methods
+    //region Timer Methods
 
     public void startNewVisualSearchTaskAfterYesOrNoPressed() {
         Assert.that(mMode == Mode.VISUAL_SEARCH);
-        mTimer.cancel();
-        mTimer.purge();
-        mTimer = new Timer();
-        mTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
+        mVisualSearchTaskViewTimer.cancel();
+        mVisualSearchTaskViewTimer.purge();
+        mVisualSearchTaskViewTimer = new Timer();
+        mVisualSearchTaskViewTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
     }
 
-    //endregion Task Methods
+    private void queueNextNotification() {
+        mNotificationTimer.cancel();
+        mNotificationTimer.purge();
+        mNotificationTimer = new Timer();
+        mNotificationTimer.schedule(new SendNotificationTask(), getNextNotificationDelayMS());
+    }
+
+    //endregion Timer Methods
 
     //region Helpers
 
@@ -252,6 +262,15 @@ public class VisualSearchView extends View {
         mCanvas.drawText(text, x, y, paint);
     }
 
+    private int getNextNotificationDelayMS() {
+        // Values from [4, 5, 6, 7]
+        return (4 + mRandom.nextInt(4)) * 1000;
+    }
+
+    private int getNextNotificationNumber() {
+        return 1 + mRandom.nextInt(3);
+    }
+
     //endregion Helpers
 
     private class CountdownTimerTask extends TimerTask {
@@ -262,13 +281,16 @@ public class VisualSearchView extends View {
             if (mCurrentCountdownValue == 1) {
                 // Cancel TimerTask and Timer
                 this.cancel();
-                mTimer.cancel();
-                mTimer.purge();
+                mVisualSearchTaskViewTimer.cancel();
+                mVisualSearchTaskViewTimer.purge();
                 // Start the VisualSearchTimerTask
                 mMode = Mode.VISUAL_SEARCH;
-                mTimer = new Timer();
-                mTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
+                mVisualSearchTaskViewTimer = new Timer();
+                mVisualSearchTaskViewTimer.scheduleAtFixedRate(new VisualSearchTimerTask(), 0, VISUAL_SEARCH_DISPLAY_DURATION);
                 mVisualSearchViewEventsListener.onVisualSearchTaskFirstStart();
+
+                queueNextNotification();
+
                 return;
             }
 
@@ -287,7 +309,7 @@ public class VisualSearchView extends View {
 
             if (mVisualSearchTasksLeft == 0) {
                 this.cancel();
-                mTimer.cancel();
+                mVisualSearchTaskViewTimer.cancel();
                 // Show the completed screen
                 mMode = Mode.COMPLETED;
                 mVisualSearchViewEventsListener.onVisualSearchTaskCompleted();
@@ -302,12 +324,24 @@ public class VisualSearchView extends View {
         }
     }
 
+    private class SendNotificationTask extends TimerTask {
+        @Override
+        public void run() {
+            // Send the notification now
+            int nextNotificationNumber = getNextNotificationNumber();
+            mVisualSearchViewEventsListener.onActivityShouldSendNotification(nextNotificationNumber);
+            // Queue the next one
+            queueNextNotification();
+        }
+    }
+
     public void setVisualSearchTaskEventsListener(VisualSearchViewEventsListener listener) {
         mVisualSearchViewEventsListener = listener;
     }
 
     public interface VisualSearchViewEventsListener {
         void onVisualSearchTaskFirstStart();
+        void onActivityShouldSendNotification(int number);
         void onVisualSearchTaskCompleted();
     }
 }

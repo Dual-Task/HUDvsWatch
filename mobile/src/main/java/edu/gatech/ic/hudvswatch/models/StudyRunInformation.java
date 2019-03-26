@@ -2,20 +2,23 @@ package edu.gatech.ic.hudvswatch.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 /**
  * Created by p13i on 10/29/18.
  */
 
 public class StudyRunInformation implements Serializable {
-    private static final List<String> AVAILABLE_CONDITIONS = new ArrayList<String>() {{
-        add("Visual Search");
-        add("HUD");
-        add("Watch");
-        add("Visual Search + HUD");
-        add("Visual Search + Watch");
-    }};
+    public static class AvailableConditions {
+        public static final String VISUAL_SEARCH = "Visual Search";
+        public static final String HUD = "HUD";
+        public static final String WATCH = "Watch";
+        public static final String VISUAL_SEARCH_AND_HUD = "Visual Search + HUD";
+        public static final String VISUAL_SEARCH_AND_WATCH = "Visual Search + Watch";
+    }
 
     private String subjectId;
     private String condition;
@@ -27,8 +30,18 @@ public class StudyRunInformation implements Serializable {
         this.isTraining = isTraining;
     }
 
-    public static List<String> getAvailableConditions() {
-        return AVAILABLE_CONDITIONS;
+    /**
+     * Source: https://stackoverflow.com/a/13783744
+     * @return
+     */
+    public static List<String> getAvailableConditionsAsStrings() {
+        return new ArrayList<String>() {{
+            add(AvailableConditions.VISUAL_SEARCH);
+            add(AvailableConditions.HUD);
+            add(AvailableConditions.WATCH);
+            add(AvailableConditions.VISUAL_SEARCH_AND_HUD);
+            add(AvailableConditions.VISUAL_SEARCH_AND_WATCH);
+        }};
     }
 
     @Override
@@ -50,5 +63,9 @@ public class StudyRunInformation implements Serializable {
 
     public String isTrainingAsString() {
         return isTraining ? "TRAINING" : "TESTING";
+    }
+
+    public boolean doesConditionInvolveBluetoothDevice() {
+        return !condition.equals(AvailableConditions.VISUAL_SEARCH);
     }
 }

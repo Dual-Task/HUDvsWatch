@@ -3,6 +3,7 @@ package edu.gatech.ic.hudvswatch;
 import android.support.wearable.activity.WearableActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ public class WatchMainActivity extends WearableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_main);
+        // Keep the screen on: https://developer.android.com/training/scheduling/wakelock.html#screen
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setupViews();
 

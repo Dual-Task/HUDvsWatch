@@ -22,6 +22,12 @@ public final class Shared {
 
         }
 
+        public static final class DEVICE_NAMES {
+            public static final String MOBILE = "Samsung Galaxy Note 8";
+            public static final String WATCH = "Moto 360 2LTS";
+            public static final String HUD = "Google Glass";
+        }
+
         public static final class MAC_ADDRESSES {
             // Samsung Galaxy Note 8
             public static final String MOBILE = "50:77:05:0F:6D:20";
@@ -30,5 +36,6 @@ public final class Shared {
             // Google Glass
             public static final String HUD = "F8:8F:CA:12:F8:9B";
         }
+
     }
 }
