@@ -40,7 +40,8 @@ public class WatchMainActivity extends WearableActivity {
                 statusTextView.setText("Connecting...");
                 connectButton.setEnabled(false);
 
-                BluetoothClient bluetoothClient = new BluetoothClient(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
+                BluetoothClient bluetoothClient = new BluetoothClient(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID);
+                bluetoothClient.setBluetoothEventsListener(new BluetoothEventsListener() {
                     @Override
                     public void onConnected() {
                         runOnUiThread(new Runnable() {

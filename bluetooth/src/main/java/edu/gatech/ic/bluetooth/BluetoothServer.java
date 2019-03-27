@@ -25,82 +25,80 @@ import java.util.UUID;
 
 
 public class BluetoothServer {
-    private static final String TAG = "|ServerBluetooth|";
-
-    private BluetoothEventsListener.CONNECTION_STATE state;
+    private static final String TAG = BluetoothServer.class.getName();
 
     private BluetoothEventsListener mBluetoothEventsListener;
 
-    private BluetoothAdapter btAdapter;
-    private BluetoothDevice mDevice;
-    private BluetoothSocket btSocket;
-    private BluetoothServerSocket btServerSocket;
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothSocket mBluetoothSocket;
+    private BluetoothServerSocket mBluetoothServerSocket;
 
-    private String rfCommServiceRecordName;
-    private UUID rfCommServiceRecordUUID;
+    private String mRfCommServiceRecordName;
+    private UUID mRfCommServiceRecordUUID;
 
-    private ListenThread listenThread;
-    private BluetoothCommunicationThread commThread;
+    private ListenThread mListenThread;
+    private BluetoothCommunicationThread mCommunicationThread;
 
 
-    public BluetoothServer(String rfCommServiceRecordName, UUID rfCommServiceRecordUUID, BluetoothEventsListener bluetoothEventsListener) {
-        this.rfCommServiceRecordName = rfCommServiceRecordName;
-        this.rfCommServiceRecordUUID = rfCommServiceRecordUUID;
-        mBluetoothEventsListener = bluetoothEventsListener;
+    public BluetoothServer(String rfCommServiceRecordName, UUID rfCommServiceRecordUUID) {
+        mRfCommServiceRecordName = rfCommServiceRecordName;
+        mRfCommServiceRecordUUID = rfCommServiceRecordUUID;
 
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
+    public void setBluetoothEventsListener(BluetoothEventsListener bluetoothEventsListener) {
+        mBluetoothEventsListener = bluetoothEventsListener;
+    }
 
     public void listen() {
-        if (listenThread != null) {
+        if (mListenThread != null) {
             Log.e(TAG, "A listen thread was already running. Cancelling...");
-            listenThread.cancel();
+            mListenThread.cancel();
             Log.d(TAG, "Canceled.");
         }
-        listenThread = new ListenThread();
-        listenThread.start();
+        mListenThread = new ListenThread();
+        mListenThread.start();
     }
 
     public void disconnect() {
         Log.d(TAG, "Disconnecting threads.");
-        if (listenThread != null) {
+        if (mListenThread != null) {
             Log.d(TAG, "Cancelling the listen thread...");
-            listenThread.cancel();
+            mListenThread.cancel();
             Log.d(TAG, "Canceled.");
-            listenThread = null;
+            mListenThread = null;
         }
-        if (commThread != null) {
+        if (mCommunicationThread != null) {
             Log.d(TAG, "Cancelling the communication thread...");
-            commThread.cancel();
+            mCommunicationThread.cancel();
             Log.d(TAG, "Canceled.");
-            commThread = null;
+            mCommunicationThread = null;
         }
     }
 
-    private void initiateCommunication(BluetoothSocket socket) {
-        if (commThread != null) {
+    private void startCommunicationThread() {
+        if (mCommunicationThread != null) {
             Log.e(TAG, "A communication thread was already running. Cancelling...");
-            commThread.cancel();
+            mCommunicationThread.cancel();
             Log.d(TAG, "Canceled.");
         }
         Log.d(TAG, "Initiating the Communication thread.");
-        commThread = new BluetoothCommunicationThread(mBluetoothEventsListener, socket);
-        commThread.start();
+        mCommunicationThread = new BluetoothCommunicationThread(mBluetoothSocket);
+        mCommunicationThread.setBluetoothEventsListener(mBluetoothEventsListener);
+        mCommunicationThread.start();
     }
 
-    public BluetoothCommunicationThread getCommThread() {
-        return commThread;
+    public BluetoothCommunicationThread getCommunicationThread() {
+        return mCommunicationThread;
     }
 
     private class ListenThread extends Thread {
-        private boolean isRunning;
+        private boolean mIsRunning;
 
         public ListenThread() {
             try {
-                btServerSocket = btAdapter.listenUsingRfcommWithServiceRecord(rfCommServiceRecordName, rfCommServiceRecordUUID);
+                mBluetoothServerSocket = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(mRfCommServiceRecordName, mRfCommServiceRecordUUID);
             } catch (IOException e) {
                 Log.e(TAG, "Socket failed.");
                 cancel();
@@ -108,20 +106,20 @@ public class BluetoothServer {
         }
 
         public void run() {
-            isRunning = true;
+            mIsRunning = true;
 
-            while (isRunning) {
+            while (mIsRunning) {
                 try {
                     Log.d(TAG, "Listening for devices..");
-                    btSocket = btServerSocket.accept(30000);
+                    mBluetoothSocket = mBluetoothServerSocket.accept(30000);
                 } catch (Exception e) {
                     Log.e(TAG, "Timed-out (30000).");
                 }
 
-                if (btSocket != null) {
+                if (mBluetoothSocket != null) {
                     Log.d(TAG, "Initiating Communications with accepted client.");
-                    initiateCommunication(btSocket);
-                    isRunning = false;
+                    startCommunicationThread();
+                    mIsRunning = false;
                 }
             }
             Log.d(TAG, "Listen thread exits the loop.");
@@ -130,13 +128,12 @@ public class BluetoothServer {
 
         void cancel() {
             Log.d(TAG, "Canceling listening thread.");
-            isRunning = false;
-            state = BluetoothEventsListener.CONNECTION_STATE.DISCONNECTED;
+            mIsRunning = false;
             cancelServerSocket();
-            if (btSocket != null) {
+            if (mBluetoothSocket != null) {
                 try {
-                    btSocket.close();
-                    btSocket = null;
+                    mBluetoothSocket.close();
+                    mBluetoothSocket = null;
                     Log.d(TAG, "Closed BT Socket successfully.");
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to close BT Socket.", e);
@@ -145,10 +142,10 @@ public class BluetoothServer {
         }
 
         void cancelServerSocket() {
-            if (btServerSocket != null) {
+            if (mBluetoothServerSocket != null) {
                 try {
-                    btServerSocket.close();
-                    btServerSocket = null;
+                    mBluetoothServerSocket.close();
+                    mBluetoothServerSocket = null;
                     Log.d(TAG, "Closed Server Socket successfully.");
                 } catch (Exception e) {
                     Log.e(TAG, "Failed to close Server Socket.", e);

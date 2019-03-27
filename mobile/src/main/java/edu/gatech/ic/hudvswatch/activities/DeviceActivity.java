@@ -101,7 +101,8 @@ public class DeviceActivity extends AppCompatActivity {
                     connectButton.setEnabled(false);
 
 
-                    BluetoothServer bluetoothServer = new BluetoothServer(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.NAME, Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID, new BluetoothEventsListener() {
+                    BluetoothServer bluetoothServer = new BluetoothServer(Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.NAME, Shared.BLUETOOTH.RF_COMM_SERVICE_RECORD.UUID);
+                    bluetoothServer.setBluetoothEventsListener(new BluetoothEventsListener() {
                         @Override
                         public void onConnected() {
                             runOnUiThread(new Runnable() {

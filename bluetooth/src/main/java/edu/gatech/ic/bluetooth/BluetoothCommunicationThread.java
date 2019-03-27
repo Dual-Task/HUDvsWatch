@@ -16,24 +16,23 @@ import java.util.Arrays;
 
 public class BluetoothCommunicationThread extends Thread {
     private static final String TAG = BluetoothCommunicationThread.class.getName();
-    private BluetoothEventsListener mBluetoothListener;
+
+    private BluetoothEventsListener mBluetoothEventsListener;
 
     private BluetoothSocket mBluetoothSocket;
-    private InputStream connectedInputStream;
-    private OutputStream connectedOutputStream;
 
-    private boolean isRunning;
+    private InputStream mInputStream;
+    private OutputStream mOutputStream;
 
-    public BluetoothCommunicationThread(BluetoothEventsListener mBluetoothListener, BluetoothSocket mBluetoothSocket) {
-        this.mBluetoothListener = mBluetoothListener;
+    private boolean mIsRunning;
+
+    public BluetoothCommunicationThread(BluetoothSocket mBluetoothSocket) {
         this.mBluetoothSocket = mBluetoothSocket;
-        init();
-    }
 
-    public void init() {
+        // Connect to socket
         try {
-            connectedInputStream = new DataInputStream(mBluetoothSocket.getInputStream());
-            connectedOutputStream = new DataOutputStream(mBluetoothSocket.getOutputStream());
+            mInputStream = new DataInputStream(mBluetoothSocket.getInputStream());
+            mOutputStream = new DataOutputStream(mBluetoothSocket.getOutputStream());
             Log.d(TAG, "I/O Streams created.");
         } catch (IOException e) {
             Log.e(TAG, "Failed to create the I/O streams.", e);
@@ -42,27 +41,25 @@ public class BluetoothCommunicationThread extends Thread {
     }
 
     public void run() {
-        if (connectedInputStream == null)
-            return;
 
-        isRunning = true;
-        mBluetoothListener.onConnected();
+        mIsRunning = true;
+        mBluetoothEventsListener.onConnected();
 
         Log.d(TAG, "Communication Thread is running...");
 
         // Keep listening to the InputStream until an exception occurs.
-        while (isRunning) {
+        while (mIsRunning) {
             try {
                 byte[] buffer = new byte[1024];
                 int numBytes;
-                while ((numBytes = connectedInputStream.read(buffer)) != -1) {
+                while ((numBytes = mInputStream.read(buffer)) != -1) {
                     byte[] bytes = Arrays.copyOf(buffer, numBytes);
-                    mBluetoothListener.onReceive(bytes);
+                    mBluetoothEventsListener.onReceive(bytes);
                 }
-                Log.d(TAG, "Full message decoded. " + numBytes);
+                Log.d(TAG, "Full message decoded with " + numBytes + " bytes.");
             } catch (IOException e) {
                 Log.e(TAG, "Input stream was disconnected.");
-                isRunning = false;
+                mIsRunning = false;
                 cancel();
             }
         }
@@ -71,7 +68,7 @@ public class BluetoothCommunicationThread extends Thread {
 
     public void write(byte[] bytes) {
         try {
-            connectedOutputStream.write(bytes);
+            mOutputStream.write(bytes);
         } catch (IOException e) {
             Log.e(TAG, "Failed to send data.");
             cancel();
@@ -81,20 +78,20 @@ public class BluetoothCommunicationThread extends Thread {
     // Call this method from the main activity to shut down the connection.
     public void cancel() {
         Log.d(TAG, "Canceling communications thread.");
-        isRunning = false;
-        if (connectedInputStream != null) {
+        mIsRunning = false;
+        if (mInputStream != null) {
             try {
-                connectedInputStream.close();
-                connectedInputStream = null;
+                mInputStream.close();
+                mInputStream = null;
                 Log.d(TAG, "Closed Input Stream successfully.");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to close Input Stream.", e);
             }
         }
-        if (connectedOutputStream != null) {
+        if (mOutputStream != null) {
             try {
-                connectedOutputStream.close();
-                connectedOutputStream = null;
+                mOutputStream.close();
+                mOutputStream = null;
                 Log.d(TAG, "Closed Output Stream successfully.");
             } catch (IOException e) {
                 Log.e(TAG, "Failed to close Output Stream.", e);
@@ -109,11 +106,11 @@ public class BluetoothCommunicationThread extends Thread {
                 Log.e(TAG, "Failed to close Client Socket.", e);
             }
         }
-        mBluetoothListener.onDisconnected();
+        mBluetoothEventsListener.onDisconnected();
     }
 
     public void setBluetoothEventsListener(BluetoothEventsListener bluetoothEventsListener) {
-        mBluetoothListener = bluetoothEventsListener;
+        mBluetoothEventsListener = bluetoothEventsListener;
     }
 
 }

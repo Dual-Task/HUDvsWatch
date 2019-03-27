@@ -5,11 +5,6 @@ package edu.gatech.ic.bluetooth;
  */
 
 public interface BluetoothEventsListener {
-    enum CONNECTION_STATE {
-        CONNECTED,
-        DISCONNECTED,
-    }
-
     void onConnected();
     void onDisconnected();
     void onReceive(byte[] bytes);

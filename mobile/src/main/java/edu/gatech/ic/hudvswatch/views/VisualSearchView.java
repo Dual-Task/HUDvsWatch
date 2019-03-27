@@ -316,7 +316,7 @@ public class VisualSearchView extends View {
             if (mVisualSearchTasksLeft == 0) {
                 this.cancel();
                 mVisualSearchTaskViewTimer.cancel();
-                SharedBluetoothServerManager.getInstance().getBluetoothServer().getCommThread().write("Completed".getBytes());
+                SharedBluetoothServerManager.getInstance().getBluetoothServer().getCommunicationThread().write("Completed".getBytes());
                 mNotificationTimer.cancel();
                 // Show the completed screen
                 mMode = Mode.COMPLETED;

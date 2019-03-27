@@ -12,12 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import java.util.List;
-
-import edu.gatech.ic.bluetooth.BluetoothServer;
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
-import edu.gatech.ic.hudvswatch.shared.Shared;
 import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
 import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
@@ -158,7 +154,7 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
         String message = "Countdown started";
         SharedBluetoothServerManager.getInstance()
                 .getBluetoothServer()
-                .getCommThread()
+                .getCommunicationThread()
                 .write(message.getBytes());
     }
 
@@ -174,7 +170,7 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
         String message = "Study started";
         SharedBluetoothServerManager.getInstance()
                 .getBluetoothServer()
-                .getCommThread()
+                .getCommunicationThread()
                 .write(message.getBytes());
     }
 
@@ -186,7 +182,7 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
             Log.i(TAG, String.format("Sending message to %s: %s", SharedBluetoothServerManager.getInstance().getDeviceName(), message));
             SharedBluetoothServerManager.getInstance()
                     .getBluetoothServer()
-                    .getCommThread()
+                    .getCommunicationThread()
                     .write(message.getBytes());
         }
     }
@@ -204,7 +200,7 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
         String message = "Completed";
         SharedBluetoothServerManager.getInstance()
                 .getBluetoothServer()
-                .getCommThread()
+                .getCommunicationThread()
                 .write(message.getBytes());
     }
 }
