@@ -2,12 +2,10 @@ package edu.gatech.ic.hudvswatch.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import edu.gatech.ic.hudvswatch.shared.Shared;
 import edu.gatech.ic.hudvswatch.utils.Assert;
-import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
 /**
  * Created by p13i on 10/29/18.
@@ -22,14 +20,18 @@ public class StudyRunInformation implements Serializable {
         public static final String VISUAL_SEARCH_AND_WATCH = "Visual Search + Watch";
     }
 
-    private String subjectId;
-    private String condition;
-    private boolean isTraining;
+    private String mSubjectId;
+    private String mCondition;
+    private boolean mIsTraining;
+    private int mNumberOfVisualSearchTasks;
+    private int mVisualSearchTaskDuration;
 
     public StudyRunInformation(String subjectId, String condition, boolean isTraining) {
-        this.subjectId = subjectId;
-        this.condition = condition;
-        this.isTraining = isTraining;
+        mSubjectId = subjectId;
+        mCondition = condition;
+        mIsTraining = isTraining;
+        mNumberOfVisualSearchTasks = isTraining ? 5 : 10;
+        mVisualSearchTaskDuration = 5;
     }
 
     /**
@@ -48,34 +50,44 @@ public class StudyRunInformation implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Subject ID: %s, Condition: %s, Is Training: %s", getSubjectId(), getCondition(), isTraining());
+        return String.format(
+                "Subject ID: %s, Condition: %s, Is Training: %s, Visual Search Tasks: %d, Visual Search Task Duration: %d",
+                mSubjectId, mCondition, mIsTraining, mNumberOfVisualSearchTasks, mVisualSearchTaskDuration);
+    }
+
+    public String toMultilineString() {
+        return toString().replace(',', '\n');
     }
 
     public String getSubjectId() {
-        return subjectId;
+        return mSubjectId;
     }
 
     public String getCondition() {
-        return condition;
+        return mCondition;
     }
 
     public boolean isTraining() {
-        return isTraining;
+        return mIsTraining;
     }
 
     public String isTrainingAsString() {
-        return isTraining ? "TRAINING" : "TESTING";
+        return mIsTraining ? "TRAINING" : "TESTING";
+    }
+
+    public int getNumberOfVisualSearchTasks() {
+        return mNumberOfVisualSearchTasks;
     }
 
     public boolean doesConditionInvolveBluetoothDevice() {
-        return !condition.equals(AvailableConditions.VISUAL_SEARCH);
+        return !mCondition.equals(AvailableConditions.VISUAL_SEARCH);
     }
 
     public String getRequiredDeviceName() {
         Assert.that(doesConditionInvolveBluetoothDevice());
-        if (condition.equals(AvailableConditions.HUD) || condition.equals(AvailableConditions.VISUAL_SEARCH_AND_HUD)) {
+        if (mCondition.equals(AvailableConditions.HUD) || mCondition.equals(AvailableConditions.VISUAL_SEARCH_AND_HUD)) {
             return Shared.BLUETOOTH.DEVICE_NAMES.HUD;
-        } else if (condition.equals(AvailableConditions.WATCH) || condition.equals(AvailableConditions.VISUAL_SEARCH_AND_WATCH)) {
+        } else if (mCondition.equals(AvailableConditions.WATCH) || mCondition.equals(AvailableConditions.VISUAL_SEARCH_AND_WATCH)) {
             return Shared.BLUETOOTH.DEVICE_NAMES.WATCH;
         }
         Assert.fail();

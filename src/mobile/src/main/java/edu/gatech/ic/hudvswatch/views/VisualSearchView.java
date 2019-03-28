@@ -316,7 +316,6 @@ public class VisualSearchView extends View {
             if (mVisualSearchTasksLeft == 0) {
                 this.cancel();
                 mVisualSearchTaskViewTimer.cancel();
-                SharedBluetoothServerManager.getInstance().getBluetoothServer().getCommunicationThread().write("Completed".getBytes());
                 mNotificationTimer.cancel();
                 // Show the completed screen
                 mMode = Mode.COMPLETED;
@@ -325,6 +324,7 @@ public class VisualSearchView extends View {
                 return;
             }
 
+            mVisualSearchViewEventsListener.onNewVisualSearchGrid();
             VisualSearchView.this.triggerRedraw();
 
             Log.d(TAG, "Number of remaining search tasks: " + mVisualSearchTasksLeft);
@@ -350,6 +350,7 @@ public class VisualSearchView extends View {
     public interface VisualSearchViewEventsListener {
         void onCountdownStarted();
         void onVisualSearchTaskFirstStart();
+        void onNewVisualSearchGrid();
         void onActivityShouldSendNotification(int number);
         void onVisualSearchTaskCompleted();
     }

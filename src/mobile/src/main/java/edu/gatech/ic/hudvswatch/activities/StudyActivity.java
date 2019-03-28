@@ -3,6 +3,7 @@ package edu.gatech.ic.hudvswatch.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import edu.gatech.ic.hudvswatch.R;
 import edu.gatech.ic.hudvswatch.models.StudyRunInformation;
 import edu.gatech.ic.hudvswatch.ui.ConfirmButton;
+import edu.gatech.ic.hudvswatch.utils.Assert;
 import edu.gatech.ic.hudvswatch.utils.SharedBluetoothServerManager;
 import edu.gatech.ic.hudvswatch.views.VisualSearchView;
 
@@ -151,11 +153,14 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
 
     @Override
     public void onCountdownStarted() {
-        String message = "Countdown started";
-        SharedBluetoothServerManager.getInstance()
-                .getBluetoothServer()
-                .getCommunicationThread()
-                .write(message.getBytes());
+        if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
+            Assert.that(mStudyRunInformation.getRequiredDeviceName().equals(SharedBluetoothServerManager.getInstance().getDeviceName()));
+            String message = "Countdown started";
+            SharedBluetoothServerManager.getInstance()
+                    .getBluetoothServer()
+                    .getCommunicationThread()
+                    .write(message.getBytes());
+        }
     }
 
     @Override
@@ -167,17 +172,29 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
                 mNoButton.setEnabled(true);
             }
         });
-        String message = "Study started";
-        SharedBluetoothServerManager.getInstance()
-                .getBluetoothServer()
-                .getCommunicationThread()
-                .write(message.getBytes());
+
+        if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
+            Assert.that(mStudyRunInformation.getRequiredDeviceName().equals(SharedBluetoothServerManager.getInstance().getDeviceName()));
+            String message = "Study started";
+            SharedBluetoothServerManager.getInstance()
+                    .getBluetoothServer()
+                    .getCommunicationThread()
+                    .write(message.getBytes());
+        }
+    }
+
+    @Override
+    public void onNewVisualSearchGrid() {
+        // Play a sound each time a new grid is available
+        final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.tone_sine_440_and_554);
+        mediaPlayer.start();
     }
 
     @Override
     public void onActivityShouldSendNotification(int number) {
         Log.i(TAG, String.format("Should send number: %d", number));
         if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
+            Assert.that(mStudyRunInformation.getRequiredDeviceName().equals(SharedBluetoothServerManager.getInstance().getDeviceName()));
             String message = String.format("Notification: %d", number);
             Log.i(TAG, String.format("Sending message to %s: %s", SharedBluetoothServerManager.getInstance().getDeviceName(), message));
             SharedBluetoothServerManager.getInstance()
@@ -197,10 +214,13 @@ public class StudyActivity extends AppCompatActivity implements VisualSearchView
             }
         });
 
-        String message = "Completed";
-        SharedBluetoothServerManager.getInstance()
-                .getBluetoothServer()
-                .getCommunicationThread()
-                .write(message.getBytes());
+        if (mStudyRunInformation.doesConditionInvolveBluetoothDevice()) {
+            Assert.that(mStudyRunInformation.getRequiredDeviceName().equals(SharedBluetoothServerManager.getInstance().getDeviceName()));
+            String message = "Completed";
+            SharedBluetoothServerManager.getInstance()
+                    .getBluetoothServer()
+                    .getCommunicationThread()
+                    .write(message.getBytes());
+        }
     }
 }

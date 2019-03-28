@@ -79,9 +79,29 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (canStartStudyAcviity) {
-            startActivity(new Intent(this, StudyActivity.class) {{
-                putExtra("studyRunInformation", studyRunInformation);
-            }});
+            new AlertDialog.Builder(this)
+                    .setTitle("Start trial?")
+                    .setMessage(String.format(
+                            "Would you like to start this study?\n" +
+                            studyRunInformation.toMultilineString()
+                    ))
+                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            startActivity(new Intent(MainActivity.this, StudyActivity.class) {{
+                                putExtra("studyRunInformation", studyRunInformation);
+                            }});
+                        }
+                    })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setCancelable(false)
+                    .show();
         }
     }
 
